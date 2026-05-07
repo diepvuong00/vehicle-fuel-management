@@ -2,8 +2,8 @@ package deoca.hhv.transport.driver.entity;
 
 public enum LicenseStatus {
 
-    VALID("Còn hạn"),  // còn hạn
-    EXPIRED("Hết hạn"); // hết hạn
+    VALID("Còn hiệu lực"),  // còn hạn
+    EXPIRED("Hết hiệu lực"); // hết hạn
 
     private final String displayName;
 

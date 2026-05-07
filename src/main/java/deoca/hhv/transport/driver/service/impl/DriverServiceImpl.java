@@ -6,6 +6,7 @@ import deoca.hhv.transport.driver.dto.reponse.DriverResponse;
 import deoca.hhv.transport.driver.dto.request.DriverRequest;
 import deoca.hhv.transport.driver.entity.Driver;
 import deoca.hhv.transport.driver.entity.DriverLicense;
+import deoca.hhv.transport.driver.entity.DriverStatus;
 import deoca.hhv.transport.driver.entity.LicenseStatus;
 import deoca.hhv.transport.driver.repository.DriverRepository;
 import deoca.hhv.transport.driver.service.DriverService;
@@ -13,6 +14,10 @@ import deoca.hhv.transport.exception.AppException;
 import deoca.hhv.transport.exception.ErrorCode;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -97,7 +102,101 @@ public class DriverServiceImpl implements DriverService {
         return response;
     }
 
-        // 2. CHECK TRÙNG SĐT
+    @Override
+    public Page<DriverResponse> getDrivers(
+            int page,
+            int size,
+            String sortBy,
+            String direction,
+            String keyword) {
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Driver> driverPage;
+
+        if (keyword != null && !keyword.isBlank()) {
+
+            driverPage = repository
+                    .findByDeletedFalseAndFullNameContainingIgnoreCase(
+                            keyword,
+                            pageable
+                    );
+
+        } else {
+
+            driverPage = repository
+                    .findByDeletedFalse(pageable);
+        }
+        return driverPage.map(this::mapToResponse);
+    }
+
+//    private DriverResponse mapToResponse(Driver driver) {
+//
+//        DriverResponse response =
+//                mapper.map(driver, DriverResponse.class);
+//
+//        // enum -> tiếng Việt
+//        response.setStatus(getDriverStatusText(driver.getStatus()));
+//
+//        // licenses
+//        List<DriverLicenseResponse> licenses =
+//                driver.getLicenses()
+//                        .stream()
+//                        .map(this::mapLicenseResponse)
+//                        .toList();
+//
+//        response.setLicenses(licenses);
+//
+//        return response;
+//    }
+
+    private DriverLicenseResponse mapLicenseResponse(
+            DriverLicense license
+    ) {
+
+        DriverLicenseResponse response =
+                mapper.map(
+                        license,
+                        DriverLicenseResponse.class
+                );
+
+        response.setStatus(
+                getLicenseStatusText(license.getStatus())
+        );
+
+        return response;
+    }
+
+    private String getLicenseStatusText(Enum<?> status) {
+
+        return switch (status.name()) {
+
+            case "ACTIVE" -> "Đang làm";
+
+            case "INACTIVE" -> "Đã nghỉ";
+
+            case "SUSPENDED" -> "Tạm nghỉ";
+
+            default -> "Không xác định";
+        };
+    }
+
+    private String getDriverStatusText(Enum<?> status) {
+        return switch (status.name()) {
+
+            case "VALID" -> "Còn hiệu lực";
+
+            case "EXPIRED" -> "Hết hiệu lực";
+
+            default -> "Không xác định";
+        };
+    }
+
+    // 2. CHECK TRÙNG SĐT
 //        if (repository.existsByPhone(request.getPhone())) {
 //            throw new AppException(ErrorCode.PHONE_ALREADY_EXISTS);
 //        }
