@@ -17,7 +17,7 @@ public class AuditLog {
     private String id;
 
     private String action;        // CREATE / UPDATE / DELETE
-    private String entityName;    // VEHICLE
+    private String entityName;    // VEHICLE / DRIVER /
     private String entityId;
 
     @Column(columnDefinition = "TEXT")

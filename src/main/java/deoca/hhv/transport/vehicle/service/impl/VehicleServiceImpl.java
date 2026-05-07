@@ -59,7 +59,11 @@ public class VehicleServiceImpl implements VehicleService {
         Vehicle saved = repository.save(theVehicle);
 
 //              3.1 Audit
-        auditService.log("CREATE", "VEHICLE", saved.getId(), null, saved);
+        auditService.log(
+                "CREATE",
+                "VEHICLE",
+                saved.getId(),
+                null, saved);
 
 //              4. map Entity -> Response (AUTO)
         return mapper.map(saved, VehicleResponse.class);

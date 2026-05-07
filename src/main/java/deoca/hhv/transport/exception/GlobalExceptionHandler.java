@@ -45,9 +45,11 @@ public class GlobalExceptionHandler {
     // SYSTEM ERROR
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<?>> handleException(Exception ex) {
-
+        // 1. In lỗi ra console để debug
+        ex.printStackTrace();
         return ResponseEntity
                 .status(ErrorCode.UNCATEGORIZED_EXCEPTION.getStatus())
                 .body(ApiResponse.error(ErrorCode.UNCATEGORIZED_EXCEPTION));
     }
+
 }
