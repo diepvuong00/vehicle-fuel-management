@@ -17,6 +17,7 @@ public enum ErrorCode {
     //DRIVER
     DRIVER_ALREADY_EXISTS(2001, "Tài xế đã tồn tại",HttpStatus.BAD_REQUEST),
     NATIONAL_ID_EXISTED(2003, "Số điện thoại đã tồn tại", HttpStatus.BAD_REQUEST),
+    DRIVER_NOT_FOUND(2004, "Driver not found", HttpStatus.BAD_REQUEST),
     PHONE_ALREADY_EXISTS(2002, "Số điện thoại đã tồn tại", HttpStatus.BAD_REQUEST);
 
     ErrorCode(int code, String message, HttpStatus status) {

@@ -6,7 +6,6 @@ import deoca.hhv.transport.driver.dto.reponse.DriverResponse;
 import deoca.hhv.transport.driver.dto.request.DriverRequest;
 import deoca.hhv.transport.driver.entity.Driver;
 import deoca.hhv.transport.driver.entity.DriverLicense;
-import deoca.hhv.transport.driver.entity.DriverStatus;
 import deoca.hhv.transport.driver.entity.LicenseStatus;
 import deoca.hhv.transport.driver.repository.DriverRepository;
 import deoca.hhv.transport.driver.service.DriverService;
@@ -132,6 +131,17 @@ public class DriverServiceImpl implements DriverService {
                     .findByDeletedFalse(pageable);
         }
         return driverPage.map(this::mapToResponse);
+    }
+
+    @Override
+    public DriverResponse getDriverById(String id) {
+
+        Driver driver = repository
+                .findByIdAndDeletedFalse(id)
+                .orElseThrow(() ->
+                        new AppException(ErrorCode.DRIVER_NOT_FOUND));
+
+        return mapToResponse(driver);
     }
 
 //    private DriverResponse mapToResponse(Driver driver) {

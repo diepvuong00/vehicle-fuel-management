@@ -67,4 +67,19 @@ public class DriverController {
                 .build();
     }
 
+//    3. Hiển thị chi tiết thông tin của tài xế
+    @GetMapping("/{id}")
+    public ApiResponse<DriverResponse> getDriverById(
+            @PathVariable String id
+    ) {
+
+        return ApiResponse.<DriverResponse>builder()
+                .success(true)
+                .message("Lấy thông tin tài xế thành công")
+                .data(service.getDriverById(id))
+                .timestamp(LocalDateTime.now())
+                .code(200)
+                .build();
+    }
+
 }

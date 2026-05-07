@@ -18,4 +18,7 @@ public interface DriverService {
             String keyword
     );
 
+//    3. Hiển thị chi tiết thông tin của một tài xế
+//    DriverResponse findByIdAndDeletedFalse(String id);
+    DriverResponse getDriverById(String id);
 }
