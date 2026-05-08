@@ -15,11 +15,15 @@ public class DriverLicenseResponse {
     private LocalDate expiryDate;
     private String issuePlace;
 
+//    Trạng thái của gplx - còn hạn/
     private String status;
 
-//    Cảnh báo hết hạn, tính toán ở Service
-//    private boolean isExpiringSoon;
+//   NORMAL / 30_DAYS / 15_DAYS / 3_DAYS / EXPIRED
+    private String warningLevel;
 
-//    Thông báo chi tiết (Ví dụ: "Bằng lái sắp hết hạn trong 5 ngày")
-//    private String expiryWarningMessage;
+//    Thông báo chi tiết (Ví dụ: "Bằng lái sắp hết hạn trong 30 ngày")
+    private String warningMessage;
+
+    // số ngày còn lại
+    private Long remainingDays;
 }

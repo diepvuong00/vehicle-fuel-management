@@ -9,6 +9,7 @@ import deoca.hhv.transport.driver.entity.DriverLicense;
 import deoca.hhv.transport.driver.entity.LicenseStatus;
 import deoca.hhv.transport.driver.repository.DriverRepository;
 import deoca.hhv.transport.driver.service.DriverService;
+import deoca.hhv.transport.driver.util.LicenseWarningUtil;
 import deoca.hhv.transport.exception.AppException;
 import deoca.hhv.transport.exception.ErrorCode;
 import jakarta.transaction.Transactional;
@@ -91,9 +92,12 @@ public class DriverServiceImpl implements DriverService {
         DriverResponse response = mapper.map(driver, DriverResponse.class);
 
         if (driver.getLicenses() != null) {
-            List<DriverLicenseResponse> licenses = driver.getLicenses().stream()
-                    .map(l -> mapper.map(l, DriverLicenseResponse.class))
-                    .toList();
+            List<DriverLicenseResponse> licenses =
+                    driver.getLicenses()
+                            .stream()
+//                            .map(l -> mapper.map(l, DriverLicenseResponse.class))
+                            .map(this::mapLicenseResponse)
+                            .toList();
 
             response.setLicenses(licenses);
         }
@@ -144,26 +148,6 @@ public class DriverServiceImpl implements DriverService {
         return mapToResponse(driver);
     }
 
-//    private DriverResponse mapToResponse(Driver driver) {
-//
-//        DriverResponse response =
-//                mapper.map(driver, DriverResponse.class);
-//
-//        // enum -> tiếng Việt
-//        response.setStatus(getDriverStatusText(driver.getStatus()));
-//
-//        // licenses
-//        List<DriverLicenseResponse> licenses =
-//                driver.getLicenses()
-//                        .stream()
-//                        .map(this::mapLicenseResponse)
-//                        .toList();
-//
-//        response.setLicenses(licenses);
-//
-//        return response;
-//    }
-
     private DriverLicenseResponse mapLicenseResponse(
             DriverLicense license
     ) {
@@ -174,8 +158,10 @@ public class DriverServiceImpl implements DriverService {
                         DriverLicenseResponse.class
                 );
 
-        response.setStatus(
-                getLicenseStatusText(license.getStatus())
+        // xử lý warning
+        LicenseWarningUtil.setLicenseWarning(
+                license,
+                response
         );
 
         return response;
@@ -195,16 +181,6 @@ public class DriverServiceImpl implements DriverService {
         };
     }
 
-    private String getDriverStatusText(Enum<?> status) {
-        return switch (status.name()) {
-
-            case "VALID" -> "Còn hiệu lực";
-
-            case "EXPIRED" -> "Hết hiệu lực";
-
-            default -> "Không xác định";
-        };
-    }
 
     // 2. CHECK TRÙNG SĐT
 //        if (repository.existsByPhone(request.getPhone())) {
