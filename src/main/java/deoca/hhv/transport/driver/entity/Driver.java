@@ -1,5 +1,6 @@
 package deoca.hhv.transport.driver.entity;
 
+import deoca.hhv.transport.fuel.entity.FuelIssue;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -43,6 +44,12 @@ public class Driver {
             fetch = FetchType.LAZY
     )
     private List<DriverLicense> licenses;
+
+    @OneToMany(
+            mappedBy = "driver",
+            fetch = FetchType.LAZY
+    )
+    private List<FuelIssue> fuelIssues;
 
     private boolean deleted = false;
 

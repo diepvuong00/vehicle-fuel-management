@@ -1,11 +1,13 @@
 package deoca.hhv.transport.vehicle.entity;
 
+import deoca.hhv.transport.fuel.entity.FuelIssue;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -37,6 +39,12 @@ public class Vehicle {
     private VehicleStatus status = VehicleStatus.ACTIVE;
 
     private boolean deleted = false;
+
+    @OneToMany(
+            mappedBy = "vehicle",
+            fetch = FetchType.LAZY
+    )
+    private List<FuelIssue> fuelIssues;
 
     //audit
     private LocalDateTime createdAt;
