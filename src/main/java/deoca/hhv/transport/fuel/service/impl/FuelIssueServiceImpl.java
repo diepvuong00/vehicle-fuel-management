@@ -1,19 +1,26 @@
 package deoca.hhv.transport.fuel.service.impl;
 
+import deoca.hhv.transport.common.PageResponse;
 import deoca.hhv.transport.driver.entity.Driver;
 import deoca.hhv.transport.driver.repository.DriverRepository;
 import deoca.hhv.transport.fuel.dto.reponse.FuelIssueResponse;
 import deoca.hhv.transport.fuel.dto.request.FuelIssueRequest;
 import deoca.hhv.transport.fuel.entity.FuelIssue;
+import deoca.hhv.transport.fuel.enums.FuelIssueStatus;
 import deoca.hhv.transport.fuel.repository.FuelIssueRepository;
 import deoca.hhv.transport.fuel.service.FuelIssueService;
 import deoca.hhv.transport.vehicle.entity.Vehicle;
 import deoca.hhv.transport.vehicle.repository.VehicleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -92,5 +99,99 @@ public class FuelIssueServiceImpl implements FuelIssueService {
 
     private String generateCode() {
         return "FI-" + System.currentTimeMillis();
+    }
+
+//    2.Hiển thị danh sách phiếu cap phat
+
+    @Override
+    public PageResponse<FuelIssueResponse> getAll(
+            int page,
+            int size,
+            String status,
+            String vehicleId,
+            String driverId,
+            String keyword
+    ) {
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+
+        Page<FuelIssue> fuelIssuePage;
+
+        /*
+         * FILTER STATUS
+         */
+        if (status != null && !status.isBlank()) {
+
+            fuelIssuePage =
+                    fuelIssueRepository.findByStatus(
+                            FuelIssueStatus.valueOf(status),
+                            pageable
+                    );
+        }
+
+        /*
+         * FILTER VEHICLE
+         */
+        else if (vehicleId != null && !vehicleId.isBlank()) {
+
+            fuelIssuePage =
+                    fuelIssueRepository.findByVehicleId(
+                            vehicleId,
+                            pageable
+                    );
+        }
+
+        /*
+         * FILTER DRIVER
+         */
+        else if (driverId != null && !driverId.isBlank()) {
+
+            fuelIssuePage =
+                    fuelIssueRepository.findByDriverId(
+                            driverId,
+                            pageable
+                    );
+        }
+
+        /*
+         * SEARCH CODE
+         */
+        else if (keyword != null && !keyword.isBlank()) {
+
+            fuelIssuePage =
+                    fuelIssueRepository
+                            .findByIssueCodeContainingIgnoreCase(
+                                    keyword,
+                                    pageable
+                            );
+        }
+
+        /*
+         * GET ALL
+         */
+        else {
+
+            fuelIssuePage =
+                    fuelIssueRepository.findAll(pageable);
+        }
+
+        List<FuelIssueResponse> responses =
+                fuelIssuePage.getContent()
+                        .stream()
+                        .map(this::mapResponse)
+                        .toList();
+
+        return PageResponse.<FuelIssueResponse>builder()
+                .content(responses)
+                .page(fuelIssuePage.getNumber())
+                .size(fuelIssuePage.getSize())
+                .totalElements(fuelIssuePage.getTotalElements())
+                .totalPages(fuelIssuePage.getTotalPages())
+                .last(fuelIssuePage.isLast())
+                .build();
     }
 }

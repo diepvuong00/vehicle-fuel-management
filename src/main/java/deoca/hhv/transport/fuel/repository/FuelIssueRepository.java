@@ -10,8 +10,23 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FuelIssueRepository extends JpaRepository<FuelIssue, String> {
 
-//    Page<FuelIssue> findByStatus(
-//            FuelIssueStatus status,
-//            Pageable pageable
-//    );
+    Page<FuelIssue> findByStatus(
+            FuelIssueStatus status,
+            Pageable pageable
+    );
+
+    Page<FuelIssue> findByVehicleId(
+            String vehicleId,
+            Pageable pageable
+    );
+
+    Page<FuelIssue> findByDriverId(
+            String driverId,
+            Pageable pageable
+    );
+
+    Page<FuelIssue> findByIssueCodeContainingIgnoreCase(
+            String keyword,
+            Pageable pageable
+    );
 }
