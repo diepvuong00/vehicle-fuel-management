@@ -7,7 +7,18 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "fuel_norms")
+@Table(
+        name = "fuel_norms",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_vehicle_purpose",
+                        columnNames = {
+                                "vehicle_id",
+                                "purpose_id"
+                        }
+                )
+        }
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -43,6 +54,15 @@ public class FuelNorm {
     private Double normValue;
 
     /*
+     * Đơn vị hiển thị
+     * VD:
+     * L/km
+     * L/h
+     */
+    @Column(name = "display_unit")
+    private String displayUnit;
+
+    /*
         Có hiệu lực từ ngày
      */
     @Column(name = "effective_from")
@@ -51,8 +71,8 @@ public class FuelNorm {
     /*
         Hết hiệu lực
      */
-    @Column(name = "effective_to")
-    private LocalDate effectiveTo;
+//    @Column(name = "effective_to")
+//    private LocalDate effectiveTo;
 
     /*
         Đang áp dụng

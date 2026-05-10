@@ -22,7 +22,15 @@ public enum ErrorCode {
 
     //PURPOSE
     PURPOSE_CODE_ALREADY_EXISTS(3001, "Mã đã tồn tại", HttpStatus.BAD_REQUEST),
-    PURPOSE_NAME_ALREADY_EXISTS(3002, "Tên mục đích đã tồn tại", HttpStatus.BAD_REQUEST);
+    PURPOSE_NAME_ALREADY_EXISTS(3002, "Tên mục đích đã tồn tại", HttpStatus.BAD_REQUEST),
+    PURPOSE_NOT_FOUND(3003, "Không tìm thấy mục đích", HttpStatus.BAD_REQUEST),
+    PURPOSE_NOT_APPLY_FUEL_NORM(3004, "Mục đích này không áp dụng định mức nhiên liệu", HttpStatus.BAD_REQUEST),
+
+    //FUEL NORM
+    PUEL_NORM_ALREADY_EXISTS(4001, "Tên mục đích đã tồn tại", HttpStatus.BAD_REQUEST),
+
+    // PURPOSE & FUEL NORM VALIDATION
+    INVALID_NORM_VALUE(5001, "Giá trị định mức phải lớn hơn 0", HttpStatus.BAD_REQUEST);
 
     ErrorCode(int code, String message, HttpStatus status) {
         this.code = code;

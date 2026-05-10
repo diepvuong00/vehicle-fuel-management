@@ -4,6 +4,9 @@ import deoca.hhv.transport.trip.enums.PurposeUnit;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(
         name = "purposes",
@@ -54,6 +57,9 @@ public class Purpose {
      */
     @Column(name = "apply_fuel_norm")
     private Boolean applyFuelNorm;
+
+    @OneToMany(mappedBy = "purpose")
+    private List<FuelNorm> fuelNorms = new ArrayList<>();
 
     /*
      * Mô tả

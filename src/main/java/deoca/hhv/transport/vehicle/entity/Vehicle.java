@@ -2,6 +2,7 @@ package deoca.hhv.transport.vehicle.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import deoca.hhv.transport.fuel.entity.FuelIssue;
+import deoca.hhv.transport.trip.entity.FuelNorm;
 import deoca.hhv.transport.trip.entity.TripLog;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -52,6 +53,9 @@ public class Vehicle {
     @JsonIgnore
     @OneToMany(mappedBy = "vehicle")
     private List<TripLog> trips = new ArrayList<>();
+
+    @OneToMany(mappedBy = "vehicle")
+    private List<FuelNorm> fuelNorms = new ArrayList<>();
 
     //audit
     private LocalDateTime createdAt;
