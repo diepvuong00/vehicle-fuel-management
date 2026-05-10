@@ -1,11 +1,14 @@
 package deoca.hhv.transport.driver.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import deoca.hhv.transport.fuel.entity.FuelIssue;
+import deoca.hhv.transport.trip.entity.TripLog;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -50,6 +53,10 @@ public class Driver {
             fetch = FetchType.LAZY
     )
     private List<FuelIssue> fuelIssues;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "driver", fetch = FetchType.LAZY)
+    private List<TripLog> trips = new ArrayList<>();
 
     private boolean deleted = false;
 

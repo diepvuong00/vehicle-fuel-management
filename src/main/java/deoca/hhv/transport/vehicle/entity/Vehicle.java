@@ -1,12 +1,15 @@
 package deoca.hhv.transport.vehicle.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import deoca.hhv.transport.fuel.entity.FuelIssue;
+import deoca.hhv.transport.trip.entity.TripLog;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -45,6 +48,10 @@ public class Vehicle {
             fetch = FetchType.LAZY
     )
     private List<FuelIssue> fuelIssues;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "vehicle")
+    private List<TripLog> trips = new ArrayList<>();
 
     //audit
     private LocalDateTime createdAt;
