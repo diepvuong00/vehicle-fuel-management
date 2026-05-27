@@ -4,6 +4,7 @@ import deoca.hhv.transport.common.PageResponse;
 import deoca.hhv.transport.vehicle.dto.VehicleRequest;
 import deoca.hhv.transport.vehicle.dto.VehicleResponse;
 import deoca.hhv.transport.vehicle.entity.Vehicle;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -34,5 +35,8 @@ public interface VehicleService {
 
 //    7. Cập nhật một phần của phương tiện
     VehicleResponse patchVehicle(String id, VehicleRequest request);
+
+//    8. Thêm ảnh phương tiện
+    String uploadImage(String id, MultipartFile file);
 }
 

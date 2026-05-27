@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -40,7 +41,10 @@ public class DriverServiceImpl implements DriverService {
 
         this.mapper.getConfiguration().setSkipNullEnabled(true);
         this.mapper.typeMap(DriverRequest.class, Driver.class)
-                .addMappings(m -> m.skip(Driver::setId));
+                .addMappings(m -> {
+                    m.skip(Driver::setId);
+                    m.skip(Driver::setLicenses);
+                });
     }
 
     //    1.Thêm mới tài xế
@@ -182,24 +186,82 @@ public class DriverServiceImpl implements DriverService {
     }
 
 
+    @Override
+    public DriverResponse updateDriver(String id, DriverRequest request) {
+        // 1. Tìm tài xế
+        Driver driver = repository.findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new AppException(ErrorCode.DRIVER_NOT_FOUND));
+
+        // 2. Kiểm tra trùng CCCD nếu thay đổi
+        if (!driver.getNationalId().equals(request.getNationalId()) &&
+                repository.existsByNationalId(request.getNationalId())) {
+            throw new AppException(ErrorCode.NATIONAL_ID_EXISTED);
+        }
+
+        // 3. Map các trường cơ bản
+        mapper.map(request, driver);
+        driver.setUpdatedAt(LocalDateTime.now());
+
+        // 4. Cập nhật danh sách bằng lái
+        if (request.getLicenses() != null) {
+            // Đảm bảo list không null
+            if (driver.getLicenses() == null) {
+                driver.setLicenses(new ArrayList<>());
+            }
+
+            // Xóa bằng lái cũ (phải dùng clear() để orphanRemoval hoạt động)
+            driver.getLicenses().clear();
+
+            List<DriverLicense> newLicenses = request.getLicenses().stream().map(l -> {
+                DriverLicense license = mapper.map(l, DriverLicense.class);
+
+                if (license.getExpiryDate().isBefore(LocalDate.now())) {
+                    license.setStatus(LicenseStatus.EXPIRED);
+                } else {
+                    license.setStatus(LicenseStatus.VALID);
+                }
+
+                license.setDriver(driver);
+                return license;
+            }).toList();
+
+            driver.getLicenses().addAll(newLicenses);
+        }
+
+        // 5. Lưu
+        repository.save(driver);
+
+        return mapToResponse(driver);
+    }
+
+    @Override
+    public void deleteDriver(String id) {
+        Driver driver = repository.findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new AppException(ErrorCode.DRIVER_NOT_FOUND));
+
+        driver.setDeleted(true);
+        driver.setUpdatedAt(LocalDateTime.now());
+        repository.save(driver);
+    }
+
     // 2. CHECK TRÙNG SĐT
 //        if (repository.existsByPhone(request.getPhone())) {
 //            throw new AppException(ErrorCode.PHONE_ALREADY_EXISTS);
 //        }
 
-        // 3. MAP REQUEST → ENTITY
+    // 3. MAP REQUEST → ENTITY
 //        Driver driver = mapper.map(request, Driver.class);
 
-        // 4. SET DEFAULT VALUE
+    // 4. SET DEFAULT VALUE
 //        driver.setCode(generateDriverCode());
 //        driver.setDeleted(false);
 //        driver.setCreatedAt(LocalDateTime.now());
 //        driver.setStatus(request.getStatus());
 
-        // 5. SAVE
+    // 5. SAVE
 //        Driver savedDriver = repository.save(driver);
 
-        // 6. AUDIT LOG
+    // 6. AUDIT LOG
 //        auditService.log(
 //                "CREATE",
 //                "DRIVER",
@@ -208,9 +270,9 @@ public class DriverServiceImpl implements DriverService {
 //                savedDriver.getFullName()
 //        );
 
-        // 7. MAP RESPONSE
+    // 7. MAP RESPONSE
 //        return mapper.map(savedDriver, DriverResponse.class);
-        
+
 
 //    }
 

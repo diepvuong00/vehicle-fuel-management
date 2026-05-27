@@ -43,10 +43,11 @@ public class Driver {
 
     @OneToMany(
             mappedBy = "driver",
+            orphanRemoval = true,
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
-    private List<DriverLicense> licenses;
+    private List<DriverLicense> licenses = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "driver",

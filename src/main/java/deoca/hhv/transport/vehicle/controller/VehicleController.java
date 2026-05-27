@@ -7,6 +7,7 @@ import deoca.hhv.transport.vehicle.dto.VehicleResponse;
 import deoca.hhv.transport.vehicle.service.VehicleService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -80,6 +81,24 @@ public class VehicleController {
             @PathVariable String id,
             @RequestParam String status) {
         return ApiResponse.success(theVehicleService.updateStatus(id, status));
+    }
+
+//    8.Thêm ảnh phương tiện
+
+    @PostMapping("/{id}/upload-image")
+    public ApiResponse<String> uploadImage(@PathVariable String id,
+                                           @RequestParam MultipartFile file){
+        return ApiResponse
+                .<String>builder()
+                .success(true)
+                .data(
+                        theVehicleService
+                                .uploadImage(
+                                        id,
+                                        file
+                                )
+                )
+                .build();
     }
 
 }

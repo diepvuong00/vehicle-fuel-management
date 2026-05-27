@@ -9,8 +9,9 @@ import deoca.hhv.transport.trip.repository.PurposeRepository;
 import deoca.hhv.transport.trip.service.PurposeService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -60,6 +61,17 @@ public class PurposeServiceImpl implements PurposeService {
         /*
          * Response
          */
+        return mapToResponse(purpose);
+    }
+
+    @Override
+    public List<PurposeResponse> getAll() {
+        return repository.findAll().stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    private PurposeResponse mapToResponse(Purpose purpose) {
         return PurposeResponse.builder()
                 .id(purpose.getId())
                 .code(purpose.getCode())
@@ -70,5 +82,4 @@ public class PurposeServiceImpl implements PurposeService {
                 .active(purpose.getActive())
                 .build();
     }
-
 }

@@ -32,4 +32,6 @@ public class FuelNormRequest {
     private LocalDate effectiveDate;
 
     private String note;
+
+    private Boolean active;
 }

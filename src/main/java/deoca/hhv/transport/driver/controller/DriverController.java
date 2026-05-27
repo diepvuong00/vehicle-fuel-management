@@ -19,7 +19,7 @@ public class DriverController {
 
     private final DriverService service;
 
-//    1.Thêm mới tài xế
+    //    1.Thêm mới tài xế
     @PostMapping
     public ResponseEntity<ApiResponse<DriverResponse>> createDriver(
             @Valid @RequestBody DriverRequest request
@@ -30,7 +30,7 @@ public class DriverController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-//    2.Hiển thị danh sách phương tiện
+    //    2.Hiển thị danh sách phương tiện
     @GetMapping
     public ApiResponse<Page<DriverResponse>> getDrivers(
 
@@ -67,7 +67,21 @@ public class DriverController {
                 .build();
     }
 
-//    3. Hiển thị chi tiết thông tin của tài xế
+    @PutMapping("/{id}")
+    public ApiResponse<DriverResponse> updateDriver(
+            @PathVariable String id,
+            @Valid @RequestBody DriverRequest request
+    ) {
+        return ApiResponse.<DriverResponse>builder()
+                .success(true)
+                .message("Cập nhật tài xế thành công")
+                .data(service.updateDriver(id, request))
+                .timestamp(LocalDateTime.now())
+                .code(200)
+                .build();
+    }
+
+    //    3. Hiển thị chi tiết thông tin của tài xế
     @GetMapping("/{id}")
     public ApiResponse<DriverResponse> getDriverById(
             @PathVariable String id
@@ -77,6 +91,17 @@ public class DriverController {
                 .success(true)
                 .message("Lấy thông tin tài xế thành công")
                 .data(service.getDriverById(id))
+                .timestamp(LocalDateTime.now())
+                .code(200)
+                .build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deleteDriver(@PathVariable String id) {
+        service.deleteDriver(id);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .message("Xóa tài xế thành công")
                 .timestamp(LocalDateTime.now())
                 .code(200)
                 .build();

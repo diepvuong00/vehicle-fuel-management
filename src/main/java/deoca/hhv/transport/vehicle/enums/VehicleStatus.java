@@ -1,4 +1,4 @@
-package deoca.hhv.transport.vehicle.entity;
+package deoca.hhv.transport.vehicle.enums;
 
 public enum VehicleStatus {
 

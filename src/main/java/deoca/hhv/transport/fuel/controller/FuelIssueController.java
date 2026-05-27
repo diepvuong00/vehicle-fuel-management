@@ -66,4 +66,36 @@ public class FuelIssueController {
                 )
                 .build();
     }
+
+    @PutMapping("/{id}")
+    public ApiResponse<FuelIssueResponse> update(
+            @PathVariable String id,
+            @Valid @RequestBody FuelIssueRequest request
+    ) {
+        return ApiResponse.<FuelIssueResponse>builder()
+                .success(true)
+                .message("Update fuel issue success")
+                .data(fuelIssueService.update(id, request))
+                .build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> delete(
+            @PathVariable String id
+    ) {
+        fuelIssueService.delete(id);
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .message("Delete fuel issue success")
+                .build();
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse<FuelIssueResponse> getById(@PathVariable String id) {
+        return ApiResponse.<FuelIssueResponse>builder()
+                .success(true)
+                .message("Get fuel issue success")
+                .data(fuelIssueService.getById(id))
+                .build();
+    }
 }

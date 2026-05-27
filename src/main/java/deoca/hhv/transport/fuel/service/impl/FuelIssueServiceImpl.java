@@ -31,7 +31,7 @@ public class FuelIssueServiceImpl implements FuelIssueService {
     private final VehicleRepository vehicleRepository;
     private final DriverRepository driverRepository;
 
-//    1.Thêm phiếu cấp phát
+    //    1.Thêm phiếu cấp phát
     @Override
     public FuelIssueResponse create(FuelIssueRequest request) {
 
@@ -193,5 +193,49 @@ public class FuelIssueServiceImpl implements FuelIssueService {
                 .totalPages(fuelIssuePage.getTotalPages())
                 .last(fuelIssuePage.isLast())
                 .build();
+    }
+
+    @Override
+    public FuelIssueResponse getById(String id) {
+        FuelIssue fuelIssue = fuelIssueRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Fuel issue not found"));
+        return mapResponse(fuelIssue);
+    }
+
+    @Override
+    public FuelIssueResponse update(String id, FuelIssueRequest request) {
+        FuelIssue fuelIssue = fuelIssueRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Fuel issue not found"));
+
+        Vehicle vehicle = vehicleRepository.findById(request.getVehicleId())
+                .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+
+        Driver driver = driverRepository.findById(request.getDriverId())
+                .orElseThrow(() -> new RuntimeException("Driver not found"));
+
+        fuelIssue.setVehicle(vehicle);
+        fuelIssue.setDriver(driver);
+        fuelIssue.setFuelType(request.getFuelType());
+        fuelIssue.setQuantity(request.getQuantity());
+        fuelIssue.setUnit(request.getUnit());
+        fuelIssue.setCurrentKm(request.getCurrentKm());
+        fuelIssue.setFuelStation(request.getFuelStation());
+        fuelIssue.setRequestedBy(request.getRequestedBy());
+        if (request.getFuelTime() != null) {
+            fuelIssue.setFuelTime(request.getFuelTime());
+        }
+        fuelIssue.setNote(request.getNote());
+
+        fuelIssueRepository.save(fuelIssue);
+
+        return mapResponse(fuelIssue);
+    }
+
+    @Override
+    public void delete(String id) {
+        if (!fuelIssueRepository.existsById(id)) {
+            throw new RuntimeException("Fuel issue not found");
+        }
+        fuelIssueRepository.deleteById(id);
     }
 }

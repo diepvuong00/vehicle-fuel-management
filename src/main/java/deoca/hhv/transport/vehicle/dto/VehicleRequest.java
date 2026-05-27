@@ -26,6 +26,7 @@ public class VehicleRequest {
     @Positive(message = "Fuel capacity must be > 0")
     private Double fuelCapacity;        //dung tích nguyên liệu
 
-    private String imageUrl;            // hình ảnh
+    private String imageKey;            // hình ảnh
+    private String unitType;
 
 }

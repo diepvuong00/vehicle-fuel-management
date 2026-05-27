@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import deoca.hhv.transport.fuel.entity.FuelIssue;
 import deoca.hhv.transport.trip.entity.FuelNorm;
 import deoca.hhv.transport.trip.entity.TripLog;
+import deoca.hhv.transport.vehicle.enums.UnitType;
+import deoca.hhv.transport.vehicle.enums.VehicleStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,10 +39,14 @@ public class Vehicle {
 
     private Double fuelCapacity;        //dung tích nguyên liệu
 
-    private String imageUrl;            // hình ảnh
+    @Column(name = "image_url")
+    private String imageKey;            // hình ảnh
 
     @Enumerated(EnumType.STRING)
     private VehicleStatus status = VehicleStatus.ACTIVE;
+
+    @Enumerated(EnumType.STRING)
+    private UnitType unitType;
 
     private boolean deleted = false;
 

@@ -6,10 +6,9 @@ import deoca.hhv.transport.trip.dto.request.PurposeRequest;
 import deoca.hhv.transport.trip.service.PurposeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,6 +29,15 @@ public class PurposeController {
                 .data(
                         service.create(request)
                 )
+                .build();
+    }
+
+    @GetMapping
+    public ApiResponse<List<PurposeResponse>> getAll() {
+        return ApiResponse.<List<PurposeResponse>>builder()
+                .success(true)
+                .message("Get purposes success")
+                .data(service.getAll())
                 .build();
     }
 }

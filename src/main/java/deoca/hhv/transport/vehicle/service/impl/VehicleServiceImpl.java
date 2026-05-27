@@ -2,16 +2,16 @@ package deoca.hhv.transport.vehicle.service.impl;
 
 import deoca.hhv.transport.audit.service.AuditService;
 import deoca.hhv.transport.common.PageResponse;
+import deoca.hhv.transport.common.storage.service.StorageService;
 import deoca.hhv.transport.exception.AppException;
 import deoca.hhv.transport.exception.ErrorCode;
 import deoca.hhv.transport.vehicle.dto.VehicleRequest;
 import deoca.hhv.transport.vehicle.dto.VehicleResponse;
 import deoca.hhv.transport.vehicle.entity.Vehicle;
-import deoca.hhv.transport.vehicle.entity.VehicleStatus;
+import deoca.hhv.transport.vehicle.enums.VehicleStatus;
 import deoca.hhv.transport.vehicle.repository.VehicleRepository;
 import deoca.hhv.transport.vehicle.repository.spec.VehicleSpecification;
 import deoca.hhv.transport.vehicle.service.VehicleService;
-import jakarta.persistence.Id;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,11 +33,13 @@ public class VehicleServiceImpl implements VehicleService {
     private final VehicleRepository repository;
     private final ModelMapper mapper;
     private final AuditService auditService;
+    private final StorageService storageService;
 
-    public VehicleServiceImpl(VehicleRepository repository, ModelMapper mapper, AuditService auditService) {
+    public VehicleServiceImpl(VehicleRepository repository, ModelMapper mapper, AuditService auditService, StorageService storageService) {
         this.repository = repository;
         this.mapper = mapper;
         this.auditService = auditService;
+        this.storageService = storageService;
     }
 
 //    1.Thêm mới phương tiện
@@ -114,7 +117,13 @@ public class VehicleServiceImpl implements VehicleService {
     public VehicleResponse getVehicleById(String id) {
         Vehicle vehicle = repository.findById(id)
                 .orElseThrow(()-> new AppException(ErrorCode.VEHICLE_NOT_FOUND));
-        return mapper.map(vehicle, VehicleResponse.class);
+
+        VehicleResponse response = mapper.map(vehicle, VehicleResponse.class);
+
+        response.setImageKey(storageService.getImageUrl(vehicle.getImageKey()));
+
+        return response;
+//        return mapper.map(vehicle, VehicleResponse.class);
     }
 
 //    4. Xóa phương tiện theo Id
@@ -197,6 +206,30 @@ public class VehicleServiceImpl implements VehicleService {
 
         // 7. Trả về kết quả
         return mapper.map(updated, VehicleResponse.class);
+    }
+
+    @Override
+    @Transactional
+    public String uploadImage(String id, MultipartFile file) {
+        Vehicle vehicle=
+                repository
+                        .findById(id)
+                        .orElseThrow(
+                                ()->new AppException(ErrorCode.VEHICLE_NOT_FOUND)
+                        );
+
+        String imageKey=
+                storageService
+                        .uploadVehicleImage(
+                                file
+                        );
+        vehicle.setImageKey(
+                imageKey
+        );
+
+        repository.save(vehicle);
+
+        return imageKey;
     }
 
 }

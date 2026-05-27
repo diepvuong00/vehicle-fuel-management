@@ -1,5 +1,6 @@
 package deoca.hhv.transport.vehicle.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
@@ -20,5 +21,8 @@ public class VehicleResponse {
 
     private Double fuelCapacity;        //dung tích nguyên liệu
 
-    private String imageUrl;
+    private String imageKey;
+
+    private String status;
+    private String unitType;
 }

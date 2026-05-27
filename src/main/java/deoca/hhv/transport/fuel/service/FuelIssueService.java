@@ -16,4 +16,10 @@ public interface FuelIssueService {
             String driverId,
             String keyword
     );
+
+    FuelIssueResponse update(String id, FuelIssueRequest request);
+
+    void delete(String id);
+
+    FuelIssueResponse getById(String id);
 }

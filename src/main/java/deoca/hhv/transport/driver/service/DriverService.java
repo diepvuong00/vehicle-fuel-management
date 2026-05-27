@@ -6,10 +6,10 @@ import org.springframework.data.domain.Page;
 
 public interface DriverService {
 
-//    1. Tạo mới tài xe
+    //    1. Tạo mới tài xe
     DriverResponse createDriver(DriverRequest request);
 
-//    2.Hiển thị danh sách tài xế và phân trang
+    //    2.Hiển thị danh sách tài xế và phân trang
     Page<DriverResponse> getDrivers(
             int page,
             int size,
@@ -18,7 +18,11 @@ public interface DriverService {
             String keyword
     );
 
-//    3. Hiển thị chi tiết thông tin của một tài xế
+    //    3. Hiển thị chi tiết thông tin của một tài xế
 //    DriverResponse findByIdAndDeletedFalse(String id);
     DriverResponse getDriverById(String id);
+
+    DriverResponse updateDriver(String id, DriverRequest request);
+
+    void deleteDriver(String id);
 }

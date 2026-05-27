@@ -15,7 +15,7 @@ public enum ErrorCode {
     VALIDATION_ERROR(1004, "Validation failed", HttpStatus.BAD_REQUEST),
 
     //DRIVER
-    DRIVER_ALREADY_EXISTS(2001, "Tài xế đã tồn tại",HttpStatus.BAD_REQUEST),
+    DRIVER_ALREADY_EXISTS(2001, "Tài xế đã tồn tại", HttpStatus.BAD_REQUEST),
     NATIONAL_ID_EXISTED(2003, "Số điện thoại đã tồn tại", HttpStatus.BAD_REQUEST),
     DRIVER_NOT_FOUND(2004, "Driver not found", HttpStatus.BAD_REQUEST),
     PHONE_ALREADY_EXISTS(2002, "Số điện thoại đã tồn tại", HttpStatus.BAD_REQUEST),
@@ -27,7 +27,8 @@ public enum ErrorCode {
     PURPOSE_NOT_APPLY_FUEL_NORM(3004, "Mục đích này không áp dụng định mức nhiên liệu", HttpStatus.BAD_REQUEST),
 
     //FUEL NORM
-    PUEL_NORM_ALREADY_EXISTS(4001, "Tên mục đích đã tồn tại", HttpStatus.BAD_REQUEST),
+    FUEL_NORM_ALREADY_EXISTS(4001, "Định mức cho phương tiện và mục đích này đã tồn tại", HttpStatus.BAD_REQUEST),
+    FUEL_NORM_NOT_FOUND(4002, "Không tìm thấy định mức nhiên liệu", HttpStatus.NOT_FOUND),
 
     // PURPOSE & FUEL NORM VALIDATION
     INVALID_NORM_VALUE(5001, "Giá trị định mức phải lớn hơn 0", HttpStatus.BAD_REQUEST);
