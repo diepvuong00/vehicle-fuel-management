@@ -46,7 +46,7 @@ public class Vehicle {
     private VehicleStatus status = VehicleStatus.ACTIVE;
 
     @Enumerated(EnumType.STRING)
-    private UnitType unitType;
+    private UnitType unitType;          // đơn vị tính km/Hour
 
     private boolean deleted = false;
 

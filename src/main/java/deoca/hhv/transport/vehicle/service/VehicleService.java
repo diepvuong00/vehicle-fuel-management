@@ -4,6 +4,7 @@ import deoca.hhv.transport.common.PageResponse;
 import deoca.hhv.transport.vehicle.dto.VehicleRequest;
 import deoca.hhv.transport.vehicle.dto.VehicleResponse;
 import deoca.hhv.transport.vehicle.entity.Vehicle;
+import deoca.hhv.transport.vehicle.enums.VehicleStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -18,7 +19,8 @@ public interface VehicleService {
             int size,
             String sort,
             String keyword,
-            String vehicleType
+            String vehicleType,
+            VehicleStatus status
     );
 
 //    3. Hiển thị chi tiết thông tin của một phương tiện

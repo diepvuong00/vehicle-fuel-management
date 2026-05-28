@@ -79,7 +79,8 @@ public class VehicleServiceImpl implements VehicleService {
             int size,
             String sort,
             String keyword,
-            String vehicleType) {
+            String vehicleType,
+            VehicleStatus status) {
 //        2.1. Sort tách chuỗi thành tên cột và hướng sắp xếp, tạo Pageable để Spring Data Jpa hiểu
         String[] sortArr = sort.split(",");
         Sort.Direction direction = sortArr[1].equalsIgnoreCase("desc")
@@ -88,15 +89,26 @@ public class VehicleServiceImpl implements VehicleService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortArr[0]));
 
 //        2.2. Sử dụng Specification để xây dựng câu lệnh sql. Ktra lọc theo Keyword hay VehicleType
+//        Specification<Vehicle> spec = Specification
+//                .where(VehicleSpecification.hasKeyword(keyword));
         Specification<Vehicle> spec = Specification
-                .where(VehicleSpecification.hasKeyword(keyword))
-                .and(VehicleSpecification.hasType(vehicleType));
+                .where(VehicleSpecification
+                        .hasKeyword(keyword))
+                .and(VehicleSpecification
+                        .hasType(vehicleType))
+                .and(VehicleSpecification
+                        .hasStatus(status))
+                .and((root, query, cb) ->
+                        cb.equal(root.get("deleted"), false)
+                );
 
 //        2.3. Query. Gọi repo để lấy data. Kq trả về Page<Vehicle> chứa tất cả đối tượng
-        Page<Vehicle> vehiclePage = repository.findAll(
-                (root, query, cb) -> cb.equal(root.get("deleted"), false),
-                pageable
-        );
+//        Page<Vehicle> vehiclePage = repository.findAll(
+//                (root, query, cb) -> cb.equal(root.get("deleted"), false),
+//                pageable
+//        );
+        Page<Vehicle> vehiclePage =
+                repository.findAll(spec, pageable);
 //        2.4. map DTO
         List<VehicleResponse> content = vehiclePage.getContent()
                 .stream()
@@ -133,7 +145,7 @@ public class VehicleServiceImpl implements VehicleService {
                 .orElseThrow(() -> new AppException(ErrorCode.VEHICLE_NOT_FOUND));
 
         vehicle.setDeleted(true);
-        vehicle.setStatus(VehicleStatus.RETIRED);
+        vehicle.setStatus(VehicleStatus.INACTIVE);
 
         repository.save(vehicle);
 

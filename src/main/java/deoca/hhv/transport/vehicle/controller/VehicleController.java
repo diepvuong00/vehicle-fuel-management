@@ -4,6 +4,7 @@ import deoca.hhv.transport.common.ApiResponse;
 import deoca.hhv.transport.common.PageResponse;
 import deoca.hhv.transport.vehicle.dto.VehicleRequest;
 import deoca.hhv.transport.vehicle.dto.VehicleResponse;
+import deoca.hhv.transport.vehicle.enums.VehicleStatus;
 import deoca.hhv.transport.vehicle.service.VehicleService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
@@ -36,10 +37,11 @@ public class VehicleController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id,desc") String sort,
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String vehicleType
-    ){
+            @RequestParam(required = false) String vehicleType,
+            @RequestParam(required = false)VehicleStatus status
+            ){
         return ApiResponse.success(
-                theVehicleService.getVehicles(page, size, sort, keyword, vehicleType)
+                theVehicleService.getVehicles(page, size, sort, keyword, vehicleType, status)
         );
     }
 

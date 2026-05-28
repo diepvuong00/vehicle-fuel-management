@@ -7,23 +7,23 @@ import lombok.Data;
 
 @Data
 public class VehicleRequest {
-    @NotBlank(message = "License plate is required")
+    @NotBlank(message = "Nhập biển số phương tiện")
     private String licensePlate;        //biển số
-    @NotBlank(message = "Vehicle Type is required")
+    @NotBlank(message = "Nhập tên phương tiện")
     private String vehicleType;         //loại xe
     private String brand;               //nhãn hiệu
     private String originCountry;       //nước sản xuất
 
-    @NotBlank(message = "EngineNumber is required")
+    @NotBlank(message = "Nhập số khung phương tiện")
     private String engineNumber;        //số khung
-    @NotBlank(message = "ChassisNumber is required")
+    @NotBlank(message = "Nhập số máy phương tiện")
     private String chassisNumber;       //số máy
 
     private String color;               //màu
-    @Min(value = 2000, message = "Invalid manufacture year")
+    @Min(value = 2000, message = "Năm sản xuất không hợp lệ")
     private Integer manufactureYear;    //năm sản xuất
 
-    @Positive(message = "Fuel capacity must be > 0")
+    @Positive(message = "Dung tích nguyên liệu phải lớn hơn 0")
     private Double fuelCapacity;        //dung tích nguyên liệu
 
     private String imageKey;            // hình ảnh
