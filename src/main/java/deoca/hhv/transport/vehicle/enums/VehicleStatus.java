@@ -5,7 +5,7 @@ public enum VehicleStatus {
     ACTIVE("Đang hoạt động"),
     MAINTENANCE("Bảo trì"),
     INACTIVE("Ngưng hoạt động"),
-    SUSPENDED("Tạm ngưng");
+    RETIRED("Tạm ngưng");
 
     private final String description;
 

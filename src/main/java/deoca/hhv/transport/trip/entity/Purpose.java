@@ -47,7 +47,8 @@ public class Purpose {
     /*
      * Đơn vị
      * KM
-     * HOUR
+     * HOUR hoạt động
+     * HOUR nổ máy
      */
     @Enumerated(EnumType.STRING)
     private PurposeUnit unit;

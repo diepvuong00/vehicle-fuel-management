@@ -22,4 +22,6 @@ public interface FuelIssueService {
     void delete(String id);
 
     FuelIssueResponse getById(String id);
+
+
 }

@@ -45,7 +45,7 @@ public class FuelNorm {
     private Purpose purpose;
 
     /*
-       Định mức
+       Gía trị định mức
        VD:
        0.3L/km
        3L/h
@@ -56,8 +56,9 @@ public class FuelNorm {
     /*
      * Đơn vị hiển thị
      * VD:
-     * L/km
-     * L/h
+     * L/100km
+     * L/h hoạt động
+     * L/h nổ máy
      */
     @Column(name = "display_unit")
     private String displayUnit;

@@ -2,6 +2,7 @@ package deoca.hhv.transport.trip.enums;
 
 public enum PurposeUnit {
 
-    KM,
-    HOUR
+    KM_100,
+    HOUR_ACTIVITY,
+    HOUR_MAINTAIN,
 }
