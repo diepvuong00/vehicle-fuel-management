@@ -1,6 +1,6 @@
 package deoca.hhv.transport.driver.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import deoca.hhv.transport.driver.enums.LicenseStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

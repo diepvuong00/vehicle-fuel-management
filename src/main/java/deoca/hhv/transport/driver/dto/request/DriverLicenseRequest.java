@@ -1,6 +1,5 @@
 package deoca.hhv.transport.driver.dto.request;
 
-import deoca.hhv.transport.driver.entity.LicenseStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

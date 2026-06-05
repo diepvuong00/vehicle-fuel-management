@@ -1,6 +1,7 @@
 package deoca.hhv.transport.driver.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import deoca.hhv.transport.driver.enums.DriverStatus;
 import deoca.hhv.transport.fuel.entity.FuelIssue;
 import deoca.hhv.transport.trip.entity.TripLog;
 import jakarta.persistence.*;

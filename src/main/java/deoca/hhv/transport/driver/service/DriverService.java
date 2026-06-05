@@ -1,7 +1,9 @@
 package deoca.hhv.transport.driver.service;
 
+import deoca.hhv.transport.common.PageResponse;
 import deoca.hhv.transport.driver.dto.reponse.DriverResponse;
 import deoca.hhv.transport.driver.dto.request.DriverRequest;
+import deoca.hhv.transport.driver.enums.DriverStatus;
 import org.springframework.data.domain.Page;
 
 public interface DriverService {
@@ -10,12 +12,12 @@ public interface DriverService {
     DriverResponse createDriver(DriverRequest request);
 
     //    2.Hiển thị danh sách tài xế và phân trang
-    Page<DriverResponse> getDrivers(
+    PageResponse<DriverResponse> getDrivers(
             int page,
             int size,
-            String sortBy,
-            String direction,
-            String keyword
+            String sort,
+            String keyword,
+            DriverStatus status
     );
 
     //    3. Hiển thị chi tiết thông tin của một tài xế

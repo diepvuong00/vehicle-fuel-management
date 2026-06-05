@@ -1,11 +1,10 @@
 package deoca.hhv.transport.driver.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import deoca.hhv.transport.driver.entity.DriverStatus;
+import deoca.hhv.transport.driver.enums.DriverStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;

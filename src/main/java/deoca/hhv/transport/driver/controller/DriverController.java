@@ -1,8 +1,10 @@
 package deoca.hhv.transport.driver.controller;
 
 import deoca.hhv.transport.common.ApiResponse;
+import deoca.hhv.transport.common.PageResponse;
 import deoca.hhv.transport.driver.dto.reponse.DriverResponse;
 import deoca.hhv.transport.driver.dto.request.DriverRequest;
+import deoca.hhv.transport.driver.enums.DriverStatus;
 import deoca.hhv.transport.driver.service.DriverService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +34,8 @@ public class DriverController {
 
     //    2.Hiển thị danh sách phương tiện
     @GetMapping
-    public ApiResponse<Page<DriverResponse>> getDrivers(
+    public ApiResponse<PageResponse<DriverResponse>>
+    getDrivers(
 
             @RequestParam(defaultValue = "0")
             int page,
@@ -40,31 +43,27 @@ public class DriverController {
             @RequestParam(defaultValue = "10")
             int size,
 
-            @RequestParam(defaultValue = "createdAt")
-            String sortBy,
-
-            @RequestParam(defaultValue = "desc")
-            String direction,
+            @RequestParam(defaultValue = "id,desc")
+            String sort,
 
             @RequestParam(required = false)
-            String keyword
+            String keyword,
+
+            @RequestParam(required = false)
+            DriverStatus status
+
     ) {
 
-        return ApiResponse.<Page<DriverResponse>>builder()
-                .success(true)
-                .message("Lấy danh sách tài xế thành công")
-                .data(
-                        service.getDrivers(
-                                page,
-                                size,
-                                sortBy,
-                                direction,
-                                keyword
-                        )
+        return ApiResponse.success(
+
+                service.getDrivers(
+                        page,
+                        size,
+                        sort,
+                        keyword,
+                        status
                 )
-                .timestamp(LocalDateTime.now())
-                .code(200)
-                .build();
+        );
     }
 
     @PutMapping("/{id}")

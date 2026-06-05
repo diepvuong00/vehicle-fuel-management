@@ -1,4 +1,4 @@
-package deoca.hhv.transport.driver.entity;
+package deoca.hhv.transport.driver.enums;
 
 public enum LicenseStatus {
 

@@ -1,13 +1,16 @@
 package deoca.hhv.transport.driver.service.impl;
 
 import deoca.hhv.transport.audit.service.AuditService;
+import deoca.hhv.transport.common.PageResponse;
 import deoca.hhv.transport.driver.dto.reponse.DriverLicenseResponse;
 import deoca.hhv.transport.driver.dto.reponse.DriverResponse;
 import deoca.hhv.transport.driver.dto.request.DriverRequest;
 import deoca.hhv.transport.driver.entity.Driver;
 import deoca.hhv.transport.driver.entity.DriverLicense;
-import deoca.hhv.transport.driver.entity.LicenseStatus;
+import deoca.hhv.transport.driver.enums.DriverStatus;
+import deoca.hhv.transport.driver.enums.LicenseStatus;
 import deoca.hhv.transport.driver.repository.DriverRepository;
+import deoca.hhv.transport.driver.repository.spec.DriverSpecification;
 import deoca.hhv.transport.driver.service.DriverService;
 import deoca.hhv.transport.driver.util.LicenseWarningUtil;
 import deoca.hhv.transport.exception.AppException;
@@ -18,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -92,6 +96,7 @@ public class DriverServiceImpl implements DriverService {
         return mapToResponse(driver);
     }
 
+
     private DriverResponse mapToResponse(Driver driver) {
         DriverResponse response = mapper.map(driver, DriverResponse.class);
 
@@ -109,36 +114,106 @@ public class DriverServiceImpl implements DriverService {
         return response;
     }
 
+//    @Override
+//    public Page<DriverResponse> getDrivers(
+//            int page,
+//            int size,
+//            String sortBy,
+//            String direction,
+//            String keyword) {
+//
+//        Sort sort = direction.equalsIgnoreCase("desc")
+//                ? Sort.by(sortBy).descending()
+//                : Sort.by(sortBy).ascending();
+//
+//        Pageable pageable = PageRequest.of(page, size, sort);
+//
+//        Page<Driver> driverPage;
+//
+//        if (keyword != null && !keyword.isBlank()) {
+//
+//            driverPage = repository
+//                    .findByDeletedFalseAndFullNameContainingIgnoreCase(
+//                            keyword,
+//                            pageable
+//                    );
+//
+//        } else {
+//
+//            driverPage = repository
+//                    .findByDeletedFalse(pageable);
+//        }
+//        return driverPage.map(this::mapToResponse);
+//    }
+
     @Override
-    public Page<DriverResponse> getDrivers(
+    public PageResponse<DriverResponse> getDrivers(
+
             int page,
             int size,
-            String sortBy,
-            String direction,
-            String keyword) {
+            String sort,
+            String keyword,
+            DriverStatus status
 
-        Sort sort = direction.equalsIgnoreCase("desc")
-                ? Sort.by(sortBy).descending()
-                : Sort.by(sortBy).ascending();
+    ) {
 
-        Pageable pageable = PageRequest.of(page, size, sort);
+        String[] sortArr =
+                sort.split(",");
 
-        Page<Driver> driverPage;
+        Sort.Direction direction =
+                sortArr[1].equalsIgnoreCase("desc")
+                        ? Sort.Direction.DESC
+                        : Sort.Direction.ASC;
 
-        if (keyword != null && !keyword.isBlank()) {
+        Pageable pageable =
+                PageRequest.of(
+                        page,
+                        size,
+                        Sort.by(
+                                direction,
+                                sortArr[0]
+                        )
+                );
 
-            driverPage = repository
-                    .findByDeletedFalseAndFullNameContainingIgnoreCase(
-                            keyword,
-                            pageable
-                    );
+        Specification<Driver> spec =
 
-        } else {
+                Specification
 
-            driverPage = repository
-                    .findByDeletedFalse(pageable);
-        }
-        return driverPage.map(this::mapToResponse);
+                        .where(
+                                DriverSpecification
+                                        .hasKeyword(keyword)
+                        )
+
+                        .and(
+                                DriverSpecification
+                                        .hasStatus(status)
+                        );
+
+        Page<Driver> driverPage =
+                repository.findAll(
+                        spec,
+                        pageable
+                );
+
+        List<DriverResponse> content =
+
+                driverPage.getContent()
+                        .stream()
+                        .map(driver ->
+                                mapper.map(
+                                        driver,
+                                        DriverResponse.class
+                                )
+                        )
+                        .toList();
+
+        return PageResponse.<DriverResponse>builder()
+                .page(page)
+                .size(size)
+                .totalPages(driverPage.getTotalPages())
+                .totalElements(driverPage.getTotalElements())
+                .content(content)
+                .build();
     }
 
     @Override

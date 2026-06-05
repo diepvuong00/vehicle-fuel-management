@@ -1,6 +1,5 @@
 package deoca.hhv.transport.driver.dto.reponse;
 
-import deoca.hhv.transport.driver.entity.DriverStatus;
 import lombok.Data;
 
 import java.time.LocalDate;
