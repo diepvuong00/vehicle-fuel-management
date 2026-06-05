@@ -1,6 +1,6 @@
-package deoca.hhv.transport.trip.entity;
+package deoca.hhv.transport.fuelnorm.entity;
 
-import deoca.hhv.transport.trip.enums.PurposeUnit;
+import deoca.hhv.transport.fuelnorm.enums.PurposeUnit;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,9 +31,6 @@ public class Purpose {
 
     /*
      * Mã mục đích
-     * VD:
-     * RUN
-     * MAINTAIN
      */
     @Column(nullable = false, unique = true)
     private String code;
@@ -46,9 +43,9 @@ public class Purpose {
 
     /*
      * Đơn vị
-     * KM
-     * HOUR hoạt động
-     * HOUR nổ máy
+     * L/100KM
+     * L/HOUR hoạt động
+     * L/HOUR nổ máy
      */
     @Enumerated(EnumType.STRING)
     private PurposeUnit unit;

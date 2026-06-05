@@ -9,10 +9,12 @@ import deoca.hhv.transport.fuel.entity.FuelIssue;
 import deoca.hhv.transport.fuel.enums.FuelIssueStatus;
 import deoca.hhv.transport.fuel.repository.FuelIssueRepository;
 import deoca.hhv.transport.fuel.service.FuelIssueService;
+import deoca.hhv.transport.trip.event.FuelIssueCreatedEvent;
 import deoca.hhv.transport.vehicle.entity.Vehicle;
 import deoca.hhv.transport.vehicle.repository.VehicleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +32,8 @@ public class FuelIssueServiceImpl implements FuelIssueService {
     private final FuelIssueRepository fuelIssueRepository;
     private final VehicleRepository vehicleRepository;
     private final DriverRepository driverRepository;
+
+    private final ApplicationEventPublisher publisher;
 
     //    1.Thêm phiếu cấp phát
     @Override
@@ -61,10 +65,25 @@ public class FuelIssueServiceImpl implements FuelIssueService {
                 .note(request.getNote())
                 .build();
 
-        fuelIssueRepository.save(fuelIssue);
+//        fuelIssueRepository.save(fuelIssue);
+//
+//        publisher.publishEvent(
+//                new FuelIssueCreatedEvent(
+//                        savedFuelIssue
+//                ));
+//
+//        return mapResponse(fuelIssue);
 
+        // 1. Thêm "FuelIssue savedFuelIssue =" ở đầu dòng để tạo biến hứng dữ liệu sau khi lưu thành công
+        FuelIssue savedFuelIssue = fuelIssueRepository.save(fuelIssue);
 
-        return mapResponse(fuelIssue);
+        // 2. Bắn sự kiện kèm theo biến vừa hứng được
+        publisher.publishEvent(
+                new FuelIssueCreatedEvent(savedFuelIssue)
+        );
+
+        // 3. return cho chuẩn dữ liệu đã lưu xuống DB
+        return mapResponse(savedFuelIssue);
     }
 
     private FuelIssueResponse mapResponse(FuelIssue fuelIssue) {

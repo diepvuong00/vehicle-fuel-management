@@ -31,7 +31,11 @@ public enum ErrorCode {
     FUEL_NORM_NOT_FOUND(4002, "Không tìm thấy định mức nhiên liệu", HttpStatus.NOT_FOUND),
 
     // PURPOSE & FUEL NORM VALIDATION
-    INVALID_NORM_VALUE(5001, "Giá trị định mức phải lớn hơn 0", HttpStatus.BAD_REQUEST);
+    INVALID_NORM_VALUE(5001, "Giá trị định mức phải lớn hơn 0", HttpStatus.BAD_REQUEST),
+
+    // TRIP LOG
+    TRIP_NOT_FOUND(6001, "Nhật trình không tồn tại", HttpStatus.BAD_REQUEST),
+    TRIP_ALREADY_CLOSED(6002, "Nhật trình đã chốt, không thể chỉnh sửa", HttpStatus.BAD_REQUEST);
 
     ErrorCode(int code, String message, HttpStatus status) {
         this.code = code;

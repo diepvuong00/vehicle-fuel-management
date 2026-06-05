@@ -1,4 +1,4 @@
-package deoca.hhv.transport.trip.dto.request;
+package deoca.hhv.transport.fuelnorm.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

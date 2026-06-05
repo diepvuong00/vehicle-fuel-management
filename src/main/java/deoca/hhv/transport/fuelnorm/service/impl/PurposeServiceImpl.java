@@ -1,12 +1,12 @@
-package deoca.hhv.transport.trip.service.impl;
+package deoca.hhv.transport.fuelnorm.service.impl;
 
 import deoca.hhv.transport.exception.AppException;
 import deoca.hhv.transport.exception.ErrorCode;
-import deoca.hhv.transport.trip.dto.reponse.PurposeResponse;
-import deoca.hhv.transport.trip.dto.request.PurposeRequest;
-import deoca.hhv.transport.trip.entity.Purpose;
-import deoca.hhv.transport.trip.repository.PurposeRepository;
-import deoca.hhv.transport.trip.service.PurposeService;
+import deoca.hhv.transport.fuelnorm.dto.reponse.PurposeResponse;
+import deoca.hhv.transport.fuelnorm.dto.request.PurposeRequest;
+import deoca.hhv.transport.fuelnorm.entity.Purpose;
+import deoca.hhv.transport.fuelnorm.repository.PurposeRepository;
+import deoca.hhv.transport.fuelnorm.service.PurposeService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

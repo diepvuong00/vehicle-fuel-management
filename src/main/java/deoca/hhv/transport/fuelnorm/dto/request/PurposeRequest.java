@@ -1,6 +1,6 @@
-package deoca.hhv.transport.trip.dto.request;
+package deoca.hhv.transport.fuelnorm.dto.request;
 
-import deoca.hhv.transport.trip.enums.PurposeUnit;
+import deoca.hhv.transport.fuelnorm.enums.PurposeUnit;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

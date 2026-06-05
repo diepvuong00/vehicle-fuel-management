@@ -1,4 +1,4 @@
-package deoca.hhv.transport.trip.dto.reponse;
+package deoca.hhv.transport.fuelnorm.dto.reponse;
 
 import lombok.Builder;
 import lombok.Data;

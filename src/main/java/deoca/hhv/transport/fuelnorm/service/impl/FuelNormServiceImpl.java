@@ -1,15 +1,15 @@
-package deoca.hhv.transport.trip.service.impl;
+package deoca.hhv.transport.fuelnorm.service.impl;
 
 import deoca.hhv.transport.common.PageResponse;
 import deoca.hhv.transport.exception.AppException;
 import deoca.hhv.transport.exception.ErrorCode;
-import deoca.hhv.transport.trip.dto.reponse.FuelNormResponse;
-import deoca.hhv.transport.trip.dto.request.FuelNormRequest;
-import deoca.hhv.transport.trip.entity.FuelNorm;
-import deoca.hhv.transport.trip.entity.Purpose;
-import deoca.hhv.transport.trip.repository.FuelNormRepository;
-import deoca.hhv.transport.trip.repository.PurposeRepository;
-import deoca.hhv.transport.trip.service.FuelNormService;
+import deoca.hhv.transport.fuelnorm.dto.reponse.FuelNormResponse;
+import deoca.hhv.transport.fuelnorm.dto.request.FuelNormRequest;
+import deoca.hhv.transport.fuelnorm.entity.FuelNorm;
+import deoca.hhv.transport.fuelnorm.entity.Purpose;
+import deoca.hhv.transport.fuelnorm.repository.FuelNormRepository;
+import deoca.hhv.transport.fuelnorm.repository.PurposeRepository;
+import deoca.hhv.transport.fuelnorm.service.FuelNormService;
 import deoca.hhv.transport.vehicle.entity.Vehicle;
 import deoca.hhv.transport.vehicle.repository.VehicleRepository;
 import jakarta.transaction.Transactional;

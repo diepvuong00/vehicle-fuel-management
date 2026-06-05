@@ -1,12 +1,8 @@
-package deoca.hhv.transport.trip.service;
+package deoca.hhv.transport.fuelnorm.service;
 
 import deoca.hhv.transport.common.PageResponse;
-import deoca.hhv.transport.trip.dto.reponse.FuelNormResponse;
-import deoca.hhv.transport.trip.dto.request.FuelNormRequest;
-import deoca.hhv.transport.trip.entity.FuelNorm;
-
-import java.util.List;
-import java.util.UUID;
+import deoca.hhv.transport.fuelnorm.dto.reponse.FuelNormResponse;
+import deoca.hhv.transport.fuelnorm.dto.request.FuelNormRequest;
 
 public interface FuelNormService {
 

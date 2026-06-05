@@ -1,4 +1,4 @@
-package deoca.hhv.transport.trip.entity;
+package deoca.hhv.transport.fuelnorm.entity;
 
 import deoca.hhv.transport.vehicle.entity.Vehicle;
 import jakarta.persistence.*;

@@ -1,4 +1,4 @@
-package deoca.hhv.transport.trip.enums;
+package deoca.hhv.transport.fuelnorm.enums;
 
 public enum PurposeUnit {
 

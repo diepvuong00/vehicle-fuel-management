@@ -2,7 +2,7 @@ package deoca.hhv.transport.vehicle.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import deoca.hhv.transport.fuel.entity.FuelIssue;
-import deoca.hhv.transport.trip.entity.FuelNorm;
+import deoca.hhv.transport.fuelnorm.entity.FuelNorm;
 import deoca.hhv.transport.trip.entity.TripLog;
 import deoca.hhv.transport.vehicle.enums.UnitType;
 import deoca.hhv.transport.vehicle.enums.VehicleStatus;

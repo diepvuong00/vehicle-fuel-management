@@ -1,6 +1,6 @@
-package deoca.hhv.transport.trip.repository;
+package deoca.hhv.transport.fuelnorm.repository;
 
-import deoca.hhv.transport.trip.entity.Purpose;
+import deoca.hhv.transport.fuelnorm.entity.Purpose;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

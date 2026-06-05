@@ -5,8 +5,8 @@ import deoca.hhv.transport.fuel.repository.FuelIssueRepository;
 import deoca.hhv.transport.report.dto.vehicle.VehicleExportDto;
 import deoca.hhv.transport.report.exporter.excel.VehicleExcelExporter;
 import deoca.hhv.transport.report.service.VehicleReportService;
-import deoca.hhv.transport.trip.entity.FuelNorm;
-import deoca.hhv.transport.trip.repository.FuelNormRepository;
+import deoca.hhv.transport.fuelnorm.entity.FuelNorm;
+import deoca.hhv.transport.fuelnorm.repository.FuelNormRepository;
 import deoca.hhv.transport.vehicle.entity.Vehicle;
 import deoca.hhv.transport.vehicle.enums.VehicleStatus;
 import deoca.hhv.transport.vehicle.repository.VehicleRepository;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Transactional

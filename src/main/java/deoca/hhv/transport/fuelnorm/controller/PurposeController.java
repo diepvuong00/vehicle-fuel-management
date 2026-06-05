@@ -1,9 +1,9 @@
-package deoca.hhv.transport.trip.controller;
+package deoca.hhv.transport.fuelnorm.controller;
 
 import deoca.hhv.transport.common.ApiResponse;
-import deoca.hhv.transport.trip.dto.reponse.PurposeResponse;
-import deoca.hhv.transport.trip.dto.request.PurposeRequest;
-import deoca.hhv.transport.trip.service.PurposeService;
+import deoca.hhv.transport.fuelnorm.dto.reponse.PurposeResponse;
+import deoca.hhv.transport.fuelnorm.dto.request.PurposeRequest;
+import deoca.hhv.transport.fuelnorm.service.PurposeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
