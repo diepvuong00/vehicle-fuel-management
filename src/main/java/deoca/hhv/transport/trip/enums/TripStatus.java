@@ -2,7 +2,9 @@ package deoca.hhv.transport.trip.enums;
 
 public enum TripStatus {
 
-    DRAFT,      // tạo phếu
-    COMPLETED,  // đã hoàn thành
-    APPROVED    // đã duyệt
+    OPEN,           //Đang nhập nhật trình.
+
+    CALCULATED,     //Đã tính toán tiêu hao nhiên liệu.
+
+    CLOSED          // Đã khóa sổ tháng. Không được sửa nữa.
 }

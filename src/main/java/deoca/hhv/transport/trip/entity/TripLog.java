@@ -2,9 +2,16 @@ package deoca.hhv.transport.trip.entity;
 
 import deoca.hhv.transport.driver.entity.Driver;
 import deoca.hhv.transport.fuelnorm.enums.FuelWarningLevel;
+import deoca.hhv.transport.trip.enums.TripStatus;
 import deoca.hhv.transport.vehicle.entity.Vehicle;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Setter
@@ -16,7 +23,10 @@ import lombok.*;
 public class TripLog {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
+    private String tripCode;
 
     private Integer month;
 
@@ -28,37 +38,43 @@ public class TripLog {
     @ManyToOne
     private Driver driver;
 
-//    Số km xe lúc bắt đầu tháng/chuyến đi
     private Double openingKm;
 
-//    Số km xe lúc kết thúc tháng/chuyến đi
     private Double closingKm;
 
-//    Tổng số km xe đã di chuyển trong kỳ
     private Double totalKm;
 
-//    Tổng số giờ làm việc
     private Double totalWorkingHour;
 
-//    Tổng số giờ nổ máy chờ
     private Double totalIdleHour;
 
-//    Tổng số lượng nhiên liệu mà xe đã nhận
     private Double totalFuelReceived;
 
-//    Lượng nhiên liệu tiêu hao thực tế của xe.
     private Double standardFuelConsumption;
 
-//    Lượng nhiên liệu tiêu hao thực tế của xe.
     private Double actualFuelConsumption;
 
-//    Phần trăm vượt định mức nhiên liệu
     private Double exceedPercent;
 
     @Enumerated(EnumType.STRING)
     private FuelWarningLevel warningLevel;
 
-//    Trạng thái Đóng/Chốt sổ của nhật ký
+    @Enumerated(EnumType.STRING)
+    private TripStatus status;
+
     private Boolean closed;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+    @OneToMany(
+            mappedBy = "tripLog",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<TripLogDetail> tripLogDetails;
 
 }

@@ -14,7 +14,8 @@ import java.time.LocalDateTime;
 @Builder
 public class ApiResponse<T> {
 
-    private boolean success;
+    @Builder.Default
+    private boolean success = true;
     private String message;
     private T data;
     private LocalDateTime timestamp;

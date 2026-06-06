@@ -31,11 +31,80 @@ public enum ErrorCode {
     FUEL_NORM_NOT_FOUND(4002, "Không tìm thấy định mức nhiên liệu", HttpStatus.NOT_FOUND),
 
     // PURPOSE & FUEL NORM VALIDATION
-    INVALID_NORM_VALUE(5001, "Giá trị định mức phải lớn hơn 0", HttpStatus.BAD_REQUEST),
+    INVALID_NORM_VALUE(
+            5001,
+            "Giá trị định mức phải lớn hơn 0",
+            HttpStatus.BAD_REQUEST),
 
     // TRIP LOG
-    TRIP_NOT_FOUND(6001, "Nhật trình không tồn tại", HttpStatus.BAD_REQUEST),
-    TRIP_ALREADY_CLOSED(6002, "Nhật trình đã chốt, không thể chỉnh sửa", HttpStatus.BAD_REQUEST);
+    TRIP_ALREADY_CLOSED(
+            6002, "Nhật trình đã chốt, không thể chỉnh sửa", HttpStatus.BAD_REQUEST),
+
+
+    // ==========================
+    // Trip
+    // ==========================
+
+    TRIP_NOT_FOUND(
+            2001,
+                    "Không tìm thấy nhật trình",
+            HttpStatus.BAD_REQUEST
+    ),
+
+    TRIP_CLOSED(
+            2002,
+                    "Nhật trình đã được chốt, không thể chỉnh sửa",
+            HttpStatus.BAD_REQUEST
+    ),
+
+    INVALID_WORK_DATE(
+            2003,
+                    "Ngày làm việc không thuộc tháng nhật trình",
+            HttpStatus.BAD_REQUEST
+    ),
+
+    END_KM_REQUIRED(
+            2004,
+                    "Bắt buộc nhập km cuối",
+            HttpStatus.BAD_REQUEST
+    ),
+
+    INVALID_KM(
+            2005,
+                    "Km cuối phải lớn hơn hoặc bằng km đầu",
+            HttpStatus.BAD_REQUEST
+    ),
+
+    INVALID_WORKING_HOUR(
+            2006,
+                    "Giờ hoạt động không hợp lệ",
+            HttpStatus.BAD_REQUEST
+    ),
+
+    INVALID_IDLE_HOUR(
+            2007,
+                    "Giờ nổ máy không hợp lệ",
+            HttpStatus.BAD_REQUEST
+    ),
+
+    DRIVER_NOT_ACTIVE(
+            2008,
+                    "Tài xế đang ngừng hoạt động",
+            HttpStatus.BAD_REQUEST
+    ),
+
+    INVALID_TRIP_STATUS(
+            2009,
+                    "Trạng thái nhật trình không hợp lệ",
+            HttpStatus.BAD_REQUEST
+    ),
+
+    DUPLICATE_TRIP(
+            2010,
+                    "Nhật trình tháng đã tồn tại",
+            HttpStatus.BAD_REQUEST
+    );
+
 
     ErrorCode(int code, String message, HttpStatus status) {
         this.code = code;

@@ -2,6 +2,7 @@ package deoca.hhv.transport.trip.dto.response;
 
 import deoca.hhv.transport.fuelnorm.enums.FuelWarningLevel;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,9 +11,10 @@ import java.util.List;
 @Builder
 @Setter
 @Getter
+@Data
 public class TripResponse {
 
-    private String id;
+    private String tripCode;
 
     private String vehicleId;
 
@@ -36,7 +38,9 @@ public class TripResponse {
 
     private FuelWarningLevel warningLevel;
 
-    private Boolean closed;
+//    private Boolean closed;
 
     private List<TripLogDetailResponse> details;
+
+    private String status;
 }

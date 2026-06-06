@@ -1,16 +1,21 @@
 package deoca.hhv.transport.trip.service.impl;
 
+import deoca.hhv.transport.driver.entity.Driver;
+import deoca.hhv.transport.driver.repository.DriverRepository;
 import deoca.hhv.transport.exception.AppException;
 import deoca.hhv.transport.exception.ErrorCode;
 import deoca.hhv.transport.fuel.entity.FuelIssue;
+import deoca.hhv.transport.trip.dto.request.TripCreateRequest;
 import deoca.hhv.transport.trip.dto.response.TripLogDetailResponse;
 import deoca.hhv.transport.trip.dto.response.TripResponse;
 import deoca.hhv.transport.trip.entity.TripLog;
 import deoca.hhv.transport.trip.entity.TripLogDetail;
+import deoca.hhv.transport.trip.enums.TripStatus;
 import deoca.hhv.transport.trip.repository.TripLogDetailRepository;
 import deoca.hhv.transport.trip.repository.TripLogRepository;
 import deoca.hhv.transport.trip.service.TripLogService;
 import deoca.hhv.transport.vehicle.entity.Vehicle;
+import deoca.hhv.transport.vehicle.repository.VehicleRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +31,14 @@ public class TripLogServiceImpl
 
     private final TripLogRepository tripLogRepository;
 
+    private final DriverRepository driverRepository;
+
+    private final VehicleRepository vehicleRepository;
+
     private final ModelMapper mapper;
 
     private final TripLogDetailRepository tripLogDetailRepository;
+
     @Override
     public void addFuelIssueToTrip(
             FuelIssue fuelIssue
@@ -107,8 +117,6 @@ public class TripLogServiceImpl
 
         tripLog.setYear(year);
 
-        tripLog.setClosed(false);
-
         return tripLogRepository.save(tripLog);
     }
 
@@ -142,7 +150,7 @@ public class TripLogServiceImpl
                         .toList();
 
         return TripResponse.builder()
-                .id(tripLog.getId())
+//                .id(tripLog.getTripCode())
                 .vehicleId(
                         tripLog.getVehicle().getId()
                 )
@@ -162,12 +170,125 @@ public class TripLogServiceImpl
                 .year(
                         tripLog.getYear()
                 )
-                .closed(
-                        tripLog.getClosed()
-                )
                 .details(
                         details
                 )
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public TripResponse createTrip(
+            TripCreateRequest request
+    ) {
+        Vehicle vehicle =
+                vehicleRepository.findById(
+                                request.getVehicleId()
+                        )
+                        .orElseThrow(
+                                () -> new AppException(ErrorCode.VEHICLE_NOT_FOUND)
+                        );
+
+        Driver driver =
+                driverRepository.findById(
+                                request.getDriverId()
+                        )
+                        .orElseThrow(
+                                () -> new AppException(ErrorCode.DRIVER_NOT_FOUND)
+                        );
+
+        boolean existed =
+                tripLogRepository
+                        .existsByVehicle_IdAndMonthAndYear(
+                                vehicle.getId(),
+                                request.getMonth(),
+                                request.getYear()
+                        );
+
+        if (existed) {
+
+            throw new RuntimeException(
+                    "Nhật trình tháng đã tồn tại"
+            );
+        }
+
+        TripLog tripLog = new TripLog();
+
+        tripLog.getId();
+
+        tripLog.setVehicle(vehicle);
+
+        tripLog.setDriver(driver);
+
+        tripLog.setMonth(
+                request.getMonth()
+        );
+
+        tripLog.setYear(
+                request.getYear()
+        );
+
+//        tripLog.setTripDate(
+//                LocalDate.of(
+//                        request.getYear(),
+//                        request.getMonth(),
+//                        1
+//                )
+//        );
+
+        tripLog.setTripCode(
+                generateTripCode(
+                        vehicle,
+                        request.getMonth(),
+                        request.getYear()
+                )
+        );
+
+        tripLog.setTotalKm(0D);
+
+        tripLog.setTotalWorkingHour(0D);
+
+        tripLog.setTotalIdleHour(0D);
+
+        tripLog.setTotalFuelReceived(0D);
+
+        tripLog.setStatus(
+                TripStatus.OPEN
+        );
+
+        tripLog = tripLogRepository.save(
+                tripLog
+        );
+
+        return TripResponse.builder()
+                .vehicleId(vehicle.getId())
+                .licensePlate(vehicle.getLicensePlate())
+                .driverId(driver.getId())
+                .driverName(driver.getFullName())
+                .month(tripLog.getMonth())
+                .year(tripLog.getYear())
+                .totalKm(0D)
+                .totalWorkingHour(0D)
+                .totalIdleHour(0D)
+                .totalFuelReceived(0D)
+                .status(tripLog.getStatus().name())
+                .tripCode(
+                        tripLog.getTripCode()
+                )
+                .build();
+    }
+
+    private String generateTripCode(
+            Vehicle vehicle,
+            Integer month,
+            Integer year
+    ) {
+
+        return "TRIP-"
+                + vehicle.getLicensePlate()
+                + "-"
+                + String.format("%02d", month)
+                + "-"
+                + year;
     }
 }

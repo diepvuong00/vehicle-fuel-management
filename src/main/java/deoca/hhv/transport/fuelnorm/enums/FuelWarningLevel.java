@@ -2,11 +2,9 @@ package deoca.hhv.transport.fuelnorm.enums;
 
 public enum FuelWarningLevel {
 
-    NORMAL,
+    NORMAL,         //≤ 5%
 
-    WARNING_5,
+    WARNING,        // 5% và ≤ 10%
 
-    WARNING_10,
-
-    WARNING_15
+    DANGEROUS       // 10%
 }

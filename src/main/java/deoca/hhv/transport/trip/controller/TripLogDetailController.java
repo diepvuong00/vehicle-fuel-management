@@ -22,7 +22,7 @@ public class TripLogDetailController {
 //    1. Thêm dòng nhật trình
     @PostMapping("/{tripId}/details")
     public ApiResponse<TripLogDetailResponse>
-    create(
+    createDetail(
 
             @PathVariable
             String tripId,
@@ -30,14 +30,18 @@ public class TripLogDetailController {
             @RequestBody
             @Valid
             TripLogDetailCreateRequest request
-    ){
+    ) {
 
-        return ApiResponse.success(
-                tripLogDetailService.create(
-                        tripId,
-                        request
+        return ApiResponse.<TripLogDetailResponse>
+                        builder()
+                .data(
+                        tripLogDetailService
+                                .createDetail(
+                                        tripId,
+                                        request
+                                )
                 )
-        );
+                .build();
     }
 
 

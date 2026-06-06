@@ -1,5 +1,6 @@
 package deoca.hhv.transport.trip.entity;
 
+import deoca.hhv.transport.driver.entity.Driver;
 import deoca.hhv.transport.fuel.entity.FuelIssue;
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,11 +17,16 @@ import java.time.LocalDate;
 public class TripLogDetail {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @ManyToOne
     @JoinColumn(name = "trip_log_id")
     private TripLog tripLog;
+
+    @ManyToOne
+    @JoinColumn(name = "driver_id")
+    private Driver driver;
 
     private LocalDate workDate;
 

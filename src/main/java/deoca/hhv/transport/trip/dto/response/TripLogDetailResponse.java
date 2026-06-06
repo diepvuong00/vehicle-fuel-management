@@ -1,17 +1,22 @@
 package deoca.hhv.transport.trip.dto.response;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@Setter
-@Getter
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TripLogDetailResponse {
 
     private String id;
+
+    private String tripLogId;
+
+    private String driverId;
+
+    private String driverName;
 
     private LocalDate workDate;
 
