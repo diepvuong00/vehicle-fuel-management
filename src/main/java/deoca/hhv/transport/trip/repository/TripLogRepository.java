@@ -2,13 +2,16 @@ package deoca.hhv.transport.trip.repository;
 
 import deoca.hhv.transport.trip.entity.TripLog;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface TripLogRepository
-        extends JpaRepository<TripLog, String> {
+public interface TripLogRepository extends
+        JpaRepository<TripLog, String>,
+        JpaSpecificationExecutor<TripLog> {
+
     Optional<TripLog>
     findByVehicleIdAndMonthAndYear(
             String vehicleId,

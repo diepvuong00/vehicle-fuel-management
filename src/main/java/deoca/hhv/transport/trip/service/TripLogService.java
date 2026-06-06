@@ -2,7 +2,11 @@ package deoca.hhv.transport.trip.service;
 
 import deoca.hhv.transport.fuel.entity.FuelIssue;
 import deoca.hhv.transport.trip.dto.request.TripCreateRequest;
+import deoca.hhv.transport.trip.dto.request.TripSearchRequest;
 import deoca.hhv.transport.trip.dto.response.TripResponse;
+import deoca.hhv.transport.trip.dto.response.TripSummaryResponse;
+
+import java.util.List;
 
 public interface TripLogService {
 
@@ -20,6 +24,11 @@ public interface TripLogService {
     TripResponse createTrip(
             TripCreateRequest request
     );
+
+//    4.Filter tự động list trip log theo tháng nawm..
+    List<TripSummaryResponse> searchTrips(
+        TripSearchRequest request
+    )   ;
 
 
 }

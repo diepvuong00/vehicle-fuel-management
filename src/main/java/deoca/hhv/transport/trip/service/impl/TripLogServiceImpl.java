@@ -6,8 +6,10 @@ import deoca.hhv.transport.exception.AppException;
 import deoca.hhv.transport.exception.ErrorCode;
 import deoca.hhv.transport.fuel.entity.FuelIssue;
 import deoca.hhv.transport.trip.dto.request.TripCreateRequest;
+import deoca.hhv.transport.trip.dto.request.TripSearchRequest;
 import deoca.hhv.transport.trip.dto.response.TripLogDetailResponse;
 import deoca.hhv.transport.trip.dto.response.TripResponse;
+import deoca.hhv.transport.trip.dto.response.TripSummaryResponse;
 import deoca.hhv.transport.trip.entity.TripLog;
 import deoca.hhv.transport.trip.entity.TripLogDetail;
 import deoca.hhv.transport.trip.enums.TripStatus;
@@ -17,6 +19,7 @@ import deoca.hhv.transport.trip.service.TripLogService;
 import deoca.hhv.transport.vehicle.entity.Vehicle;
 import deoca.hhv.transport.vehicle.repository.VehicleRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -278,6 +281,77 @@ public class TripLogServiceImpl
                 .build();
     }
 
+//    Filter auto
+    @Override
+    @Transactional(readOnly = true)
+    public List<TripSummaryResponse> searchTrips(
+            TripSearchRequest request
+    ) {
+        Specification<TripLog> spec =
+                (root, query, cb) -> cb.conjunction();
+
+        if (request.getVehicleId() != null) {
+
+            spec = spec.and(
+                    (root, query, cb) ->
+                            cb.equal(
+                                    root.get("vehicle").get("id"),
+                                    request.getVehicleId()
+                            )
+            );
+        }
+
+        if (request.getMonth() != null) {
+
+            spec = spec.and(
+                    (root, query, cb) ->
+                            cb.equal(
+                                    root.get("month"),
+                                    request.getMonth()
+                            )
+            );
+        }
+
+        if (request.getYear() != null) {
+
+            spec = spec.and(
+                    (root, query, cb) ->
+                            cb.equal(
+                                    root.get("year"),
+                                    request.getYear()
+                            )
+            );
+        }
+
+        if (request.getClosed() != null) {
+
+            spec = spec.and(
+                    (root, query, cb) ->
+                            cb.equal(
+                                    root.get("closed"),
+                                    request.getClosed()
+                            )
+            );
+        }
+
+        if (request.getDriverId() != null) {
+
+            spec = spec.and(
+                    (root, query, cb) ->
+                            cb.equal(
+                                    root.get("driver").get("id"),
+                                    request.getDriverId()
+                            )
+            );
+        }
+
+        return tripLogRepository
+                .findAll(spec)
+                .stream()
+                .map(this::toSummaryResponse)
+                .toList();
+    }
+
     private String generateTripCode(
             Vehicle vehicle,
             Integer month,
@@ -290,5 +364,68 @@ public class TripLogServiceImpl
                 + String.format("%02d", month)
                 + "-"
                 + year;
+    }
+
+    private TripSummaryResponse toSummaryResponse(
+            TripLog trip
+    ) {
+
+        return TripSummaryResponse.builder()
+
+                .id(trip.getId())
+
+                .tripCode(trip.getTripCode())
+
+                .vehicleId(
+                        trip.getVehicle().getId()
+                )
+
+                .licensePlate(
+                        trip.getVehicle().getLicensePlate()
+                )
+
+                .driverId(
+                        trip.getDriver().getId()
+                )
+
+                .driverName(
+                        trip.getDriver().getFullName()
+                )
+
+                .month(trip.getMonth())
+
+                .year(trip.getYear())
+
+                .totalKm(trip.getTotalKm())
+
+                .totalFuelReceived(
+                        trip.getTotalFuelReceived()
+                )
+
+                .actualFuelConsumption(
+                        trip.getActualFuelConsumption()
+                )
+
+                .standardFuelConsumption(
+                        trip.getStandardFuelConsumption()
+                )
+
+                .exceedPercent(
+                        trip.getExceedPercent()
+                )
+
+                .warningLevel(
+                        trip.getWarningLevel() == null
+                                ? null
+                                : trip.getWarningLevel().name()
+                )
+
+                .status(
+                        trip.getStatus() == null
+                                ? null
+                                : trip.getStatus().name()
+                )
+
+                .build();
     }
 }
