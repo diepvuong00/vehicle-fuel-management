@@ -46,18 +46,18 @@ public class TripLogDetailController {
 
 
 //    2. Xem dòng nhật trình
-    @GetMapping("/{tripId}")
-    public ApiResponse<TripResponse>
-    getById(
-            @PathVariable
-            String tripId
-    ){
-
-        return ApiResponse.success(
-                tripLogService.getById(
-                        tripId
-                )
-        );
-    }
+//    @GetMapping("/{tripId}")
+//    public ApiResponse<TripResponse>
+//    getById(
+//            @PathVariable
+//            String tripId
+//    ){
+//
+//        return ApiResponse.success(
+//                tripLogService.getById(
+//                        tripId
+//                )
+//        );
+//    }
 
 }

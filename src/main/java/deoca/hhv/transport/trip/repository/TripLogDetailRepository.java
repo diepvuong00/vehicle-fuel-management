@@ -15,4 +15,8 @@ public interface TripLogDetailRepository
     findByTripLogIdOrderByWorkDateAsc(
             String tripId
     );
+
+
+
+
 }

@@ -7,9 +7,7 @@ import deoca.hhv.transport.exception.ErrorCode;
 import deoca.hhv.transport.fuel.entity.FuelIssue;
 import deoca.hhv.transport.trip.dto.request.TripCreateRequest;
 import deoca.hhv.transport.trip.dto.request.TripSearchRequest;
-import deoca.hhv.transport.trip.dto.response.TripLogDetailResponse;
-import deoca.hhv.transport.trip.dto.response.TripResponse;
-import deoca.hhv.transport.trip.dto.response.TripSummaryResponse;
+import deoca.hhv.transport.trip.dto.response.*;
 import deoca.hhv.transport.trip.entity.TripLog;
 import deoca.hhv.transport.trip.entity.TripLogDetail;
 import deoca.hhv.transport.trip.enums.TripStatus;
@@ -352,6 +350,123 @@ public class TripLogServiceImpl
                 .toList();
     }
 
+    //    Xem chi tiết nhật trình
+    @Override
+    @Transactional(readOnly = true)
+    public TripDetailResponse getTripDetail(
+            String tripId
+    ) {
+        TripLog tripLog =
+                tripLogRepository
+                        .findById(tripId)
+                        .orElseThrow(
+                                () -> new AppException(
+                                        ErrorCode.TRIP_NOT_FOUND
+                                )
+                        );
+
+        List<TripLogDetailResponse> details =
+                tripLogDetailRepository
+                        .findByTripLogIdOrderByWorkDateAsc(
+                                tripId
+                        )
+                        .stream()
+                        .map(this::mapDetailResponse)
+                        .toList();
+
+        return TripDetailResponse.builder()
+
+                .tripId(
+                        tripLog.getId()
+                )
+
+                .tripCode(
+                        tripLog.getTripCode()
+                )
+
+                .month(
+                        tripLog.getMonth()
+                )
+
+                .year(
+                        tripLog.getYear()
+                )
+
+                .vehicleId(
+                        tripLog.getVehicle().getId()
+                )
+
+                .licensePlate(
+                        tripLog.getVehicle().getLicensePlate()
+                )
+
+                .driverId(
+                        tripLog.getDriver().getId()
+                )
+
+                .driverName(
+                        tripLog.getDriver().getFullName()
+                )
+
+                .openingKm(
+                        tripLog.getOpeningKm()
+                )
+
+                .closingKm(
+                        tripLog.getClosingKm()
+                )
+
+                .totalKm(
+                        tripLog.getTotalKm()
+                )
+
+                .totalWorkingHour(
+                        tripLog.getTotalWorkingHour()
+                )
+
+                .totalIdleHour(
+                        tripLog.getTotalIdleHour()
+                )
+
+                .totalFuelReceived(
+                        tripLog.getTotalFuelReceived()
+                )
+
+                .standardFuelConsumption(
+                        tripLog.getStandardFuelConsumption()
+                )
+
+                .actualFuelConsumption(
+                        tripLog.getActualFuelConsumption()
+                )
+
+                .exceedPercent(
+                        tripLog.getExceedPercent()
+                )
+
+                .warningLevel(
+                        tripLog.getWarningLevel() == null
+                                ? null
+                                : tripLog.getWarningLevel().name()
+                )
+
+                .status(
+                        tripLog.getStatus() == null
+                                ? null
+                                : tripLog.getStatus().name()
+                )
+
+                .details(
+                        details
+                )
+
+                .build();
+    }
+
+
+
+
+
     private String generateTripCode(
             Vehicle vehicle,
             Integer month,
@@ -428,4 +543,72 @@ public class TripLogServiceImpl
 
                 .build();
     }
+
+
+    private TripLogDetailResponse mapDetailResponse(
+            TripLogDetail detail
+    ) {
+
+        return TripLogDetailResponse.builder()
+
+                .id(
+                        detail.getId()
+                )
+
+                .tripLogId(
+                        detail.getTripLog().getId()
+                )
+
+                .driverId(
+                        detail.getDriver().getId()
+                )
+
+                .driverName(
+                        detail.getDriver().getFullName()
+                )
+
+                .workDate(
+                        detail.getWorkDate()
+                )
+
+                .workContent(
+                        detail.getWorkContent()
+                )
+
+                .startKm(
+                        detail.getStartKm()
+                )
+
+                .endKm(
+                        detail.getEndKm()
+                )
+
+                .distance(
+                        detail.getDistance()
+                )
+
+                .workingHour(
+                        detail.getWorkingHour()
+                )
+
+                .idleHour(
+                        detail.getIdleHour()
+                )
+
+                .fuelReceived(
+                        detail.getFuelReceived()
+                )
+
+                .note(
+                        detail.getNote()
+                )
+
+                .autoGenerated(
+                        detail.getAutoGenerated()
+                )
+
+                .build();
+    }
+
+
 }

@@ -3,6 +3,8 @@ package deoca.hhv.transport.trip.service;
 import deoca.hhv.transport.fuel.entity.FuelIssue;
 import deoca.hhv.transport.trip.dto.request.TripCreateRequest;
 import deoca.hhv.transport.trip.dto.request.TripSearchRequest;
+import deoca.hhv.transport.trip.dto.response.TripDetailLineResponse;
+import deoca.hhv.transport.trip.dto.response.TripDetailResponse;
 import deoca.hhv.transport.trip.dto.response.TripResponse;
 import deoca.hhv.transport.trip.dto.response.TripSummaryResponse;
 
@@ -30,5 +32,9 @@ public interface TripLogService {
         TripSearchRequest request
     )   ;
 
+//    5.Chi tiết nhật trình
+    TripDetailResponse getTripDetail(
+        String tripId
+    );
 
 }

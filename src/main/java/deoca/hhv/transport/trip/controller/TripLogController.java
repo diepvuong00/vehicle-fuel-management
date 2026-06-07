@@ -3,6 +3,8 @@ package deoca.hhv.transport.trip.controller;
 import deoca.hhv.transport.common.ApiResponse;
 import deoca.hhv.transport.trip.dto.request.TripCreateRequest;
 import deoca.hhv.transport.trip.dto.request.TripSearchRequest;
+import deoca.hhv.transport.trip.dto.response.TripDetailLineResponse;
+import deoca.hhv.transport.trip.dto.response.TripDetailResponse;
 import deoca.hhv.transport.trip.dto.response.TripResponse;
 import deoca.hhv.transport.trip.dto.response.TripSummaryResponse;
 import deoca.hhv.transport.trip.service.TripLogService;
@@ -74,6 +76,24 @@ public class TripLogController {
                     )
                 )
                 .build();
-}
+    }
+
+//    3. Xem chi tiết nhật trình
+
+    @GetMapping("/{tripId}")
+    public ApiResponse<TripDetailResponse>
+    getTripDetail(
+            @PathVariable String tripId
+    ) {
+
+        return ApiResponse.<TripDetailResponse>builder()
+                .success(true)
+                .data(
+                        tripLogService.getTripDetail(
+                                tripId
+                        )
+                )
+                .build();
+    }
 
 }

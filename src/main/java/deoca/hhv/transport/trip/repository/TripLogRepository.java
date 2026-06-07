@@ -24,4 +24,8 @@ public interface TripLogRepository extends
             Integer month,
             Integer year
     );
+
+    Optional<TripLog> findById(
+            String id
+    );
 }
