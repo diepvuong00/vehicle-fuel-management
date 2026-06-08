@@ -9,4 +9,8 @@ public interface TripLogDetailService {
             String tripId,
             TripLogDetailCreateRequest request
     );
+
+    TripLogDetailResponse getDetails(
+            String tripId
+    );
 }
