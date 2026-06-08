@@ -133,6 +133,12 @@ public enum ErrorCode {
             2016,
             "Số lượng nhiêu liệu nạp >=0.",
             HttpStatus.BAD_REQUEST
+    ),
+
+    TRIP_ALREADY_OPEN(
+            2019,
+            "Nhật trình đang mở",
+            HttpStatus.BAD_REQUEST
     );
 
 

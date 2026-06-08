@@ -39,4 +39,8 @@ public interface TripLogService {
             String tripId
     );
 
+//    7.Mở lại nhật trình
+    TripReopenResponse reopenTrip(
+        String tripId
+    );
 }

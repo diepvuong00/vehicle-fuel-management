@@ -110,4 +110,21 @@ public class TripLogController {
             )
             .build();
     }
+
+//    5. Mở lại nhật trình
+    @PostMapping("/{tripId}/reopen")
+    public ApiResponse<TripReopenResponse> reopenTrip(
+        @PathVariable String tripId
+    ) {
+
+    return ApiResponse
+            .<TripReopenResponse>builder()
+            .success(true)
+            .data(
+                    tripLogService.reopenTrip(
+                            tripId
+                    )
+            )
+            .build();
+    }
 }

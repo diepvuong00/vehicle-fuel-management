@@ -738,6 +738,57 @@ public class TripLogServiceImpl
                 .build();
     }
 
+    @Override
+    @Transactional
+    public TripReopenResponse reopenTrip(
+            String tripId
+    ) {
+        TripLog tripLog =
+                tripLogRepository
+                        .findById(tripId)
+                        .orElseThrow(
+                                () ->
+                                        new AppException(
+                                                ErrorCode.TRIP_NOT_FOUND
+                                        )
+                        );
+
+        if (
+                tripLog.getStatus()
+                        ==
+                        TripStatus.OPEN
+        ) {
+
+            throw new AppException(
+                    ErrorCode.TRIP_ALREADY_OPEN
+            );
+        }
+
+        tripLog.setStatus(
+                TripStatus.OPEN
+        );
+
+        tripLogRepository.save(
+                tripLog
+        );
+
+        return TripReopenResponse
+                .builder()
+                .tripId(
+                        tripLog.getId()
+                )
+                .tripCode(
+                        tripLog.getTripCode()
+                )
+                .status(
+                        tripLog.getStatus().name()
+                )
+                .message(
+                        "Mở lại nhật trình thành công"
+                )
+                .build();
+    }
+
     private FuelWarningLevel determineWarningLevel(
             double exceedPercent
     ) {
