@@ -5,6 +5,10 @@ import deoca.hhv.transport.driver.repository.DriverRepository;
 import deoca.hhv.transport.exception.AppException;
 import deoca.hhv.transport.exception.ErrorCode;
 import deoca.hhv.transport.fuel.entity.FuelIssue;
+import deoca.hhv.transport.fuelnorm.entity.FuelNorm;
+import deoca.hhv.transport.fuelnorm.enums.FuelWarningLevel;
+import deoca.hhv.transport.fuelnorm.repository.FuelNormRepository;
+import deoca.hhv.transport.trip.calculator.FuelNormCalculator;
 import deoca.hhv.transport.trip.dto.request.TripCreateRequest;
 import deoca.hhv.transport.trip.dto.request.TripSearchRequest;
 import deoca.hhv.transport.trip.dto.response.*;
@@ -23,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -31,6 +36,11 @@ public class TripLogServiceImpl
         implements TripLogService {
 
     private final TripLogRepository tripLogRepository;
+
+
+    private final FuelNormRepository fuelNormRepository;
+
+    private final FuelNormCalculator fuelNormCalculator;
 
     private final DriverRepository driverRepository;
 
@@ -465,7 +475,287 @@ public class TripLogServiceImpl
 
 
 
+//    Chốt nhật trình tháng
 
+    @Override
+    @Transactional
+    public TripCloseResponse closeTrip(
+            String tripId
+    ) {
+//        1.Tìm nhật trình
+        TripLog tripLog =
+                tripLogRepository
+                        .findById(tripId)
+                        .orElseThrow(
+                                () ->
+                                        new AppException(
+                                                ErrorCode.TRIP_NOT_FOUND
+                                        )
+                        );
+
+//        2.Kiểm tra nhật trình đã đóng chưa
+        if (
+                tripLog.getStatus()
+                        ==
+                        TripStatus.CLOSED
+        ) {
+
+            throw new AppException(
+                    ErrorCode.TRIP_ALREADY_CLOSED
+            );
+        }
+
+
+
+//        3. Lấy toàn bộ nhật trình
+        List<TripLogDetail> details =
+                tripLogDetailRepository
+                        .findByTripLogIdOrderByWorkDateAsc(
+                                tripId
+                        );
+
+//        4. Kiểm tra dữ liệu
+        if (details.isEmpty()) {
+
+            throw new AppException(
+                    ErrorCode.TRIP_DETAIL_EMPTY
+            );
+        }
+
+//        5. Lấy km đầu
+
+        TripLogDetail firstDetail =
+                details.stream()
+                        .filter(
+                                d -> d.getStartKm() != null
+                        )
+                        .min(
+                                Comparator.comparing(
+                                        TripLogDetail::getWorkDate
+                                )
+                        )
+                        .orElseThrow(
+                                () -> new AppException(
+                                        ErrorCode.OPENING_KM_REQUIRED
+                                )
+                        );
+
+//        6. Lấy km cuối
+        TripLogDetail lastDetail =
+                details.stream()
+                        .filter(
+                                d -> d.getEndKm() != null
+                        )
+                        .max(
+                                Comparator.comparing(
+                                        TripLogDetail::getWorkDate
+                                )
+                        )
+                        .orElseThrow(
+                                () -> new AppException(
+                                        ErrorCode.CLOSING_KM_REQUIRED
+                                )
+                        );
+
+//        7. Tính tổng km
+        Double totalKm =
+                details.stream()
+                        .mapToDouble(
+                                d ->
+                                        d.getDistance() == null
+                                                ? 0D
+                                                : d.getDistance()
+                        )
+                        .sum();
+
+//        8. Tính tổng giờ hoạt động
+        Double totalWorkingHour =
+                details.stream()
+                        .mapToDouble(
+                                d ->
+                                        d.getWorkingHour() == null
+                                                ? 0D
+                                                : d.getWorkingHour()
+                        )
+                        .sum();
+
+//        9. Tính tổng h nổ may
+        Double totalIdleHour =
+                details.stream()
+                        .mapToDouble(
+                                d ->
+                                        d.getIdleHour() == null
+                                                ? 0D
+                                                : d.getIdleHour()
+                        )
+                        .sum();
+
+//        10. Tính tongr nhiên liệu tiếp nhận
+        Double totalFuelReceived =
+                details.stream()
+                        .mapToDouble(
+                                d ->
+                                        d.getFuelReceived() == null
+                                                ? 0D
+                                                : d.getFuelReceived()
+                        )
+                        .sum();
+
+//        11. Cập nhật triplog
+        tripLog.setOpeningKm(
+                firstDetail.getStartKm()
+        );
+
+        tripLog.setClosingKm(
+                lastDetail.getEndKm()
+        );
+
+        tripLog.setTotalKm(
+                totalKm
+        );
+
+        tripLog.setTotalWorkingHour(
+                totalWorkingHour
+        );
+
+        tripLog.setTotalIdleHour(
+                totalIdleHour
+        );
+
+        tripLog.setTotalFuelReceived(
+                totalFuelReceived
+        );
+
+//        12. Tính định mức xe
+//        12.1 Lấy định mức của xe
+        List<FuelNorm> fuelNorms =
+                fuelNormRepository
+                        .findByVehicleIdAndActiveTrue(
+                                tripLog
+                                        .getVehicle()
+                                        .getId()
+                        );
+//        12.2 Tính định mức thực tế
+        Double standardFuel =
+                fuelNormCalculator
+                        .calculate(
+                                totalKm,
+                                totalWorkingHour,
+                                totalIdleHour,
+                                fuelNorms
+                        );
+
+        tripLog.setStandardFuelConsumption(
+                standardFuel
+        );
+
+
+//        Đã cấp bao nhiêu dầu
+//                =
+//                Tiêu hao thực tế
+        tripLog.setActualFuelConsumption(
+                totalFuelReceived
+        );
+
+        if (totalFuelReceived <= 0) {
+            throw new AppException(
+                    ErrorCode.NO_FUEL_RECEIVED
+            );
+        }
+
+//        13. Tính %
+        double exceedPercent = 0D;
+        if (
+                standardFuel != null
+                        &&
+                        standardFuel > 0
+        ) {
+
+            exceedPercent =
+                    (
+                            totalFuelReceived
+                                    -
+                                    standardFuel
+                    )
+                            /
+                            standardFuel
+                            *
+                            100;
+        }
+
+        tripLog.setExceedPercent(
+                exceedPercent
+        );
+
+        tripLog.setStatus(
+                TripStatus.CLOSED
+        );
+
+        tripLogRepository.save(
+                tripLog
+        );
+
+
+        FuelWarningLevel warningLevel =
+                determineWarningLevel(
+                        exceedPercent
+                );
+
+        tripLog.setWarningLevel(
+                warningLevel
+        );
+
+        tripLog.setStatus(
+                TripStatus.CLOSED
+        );
+
+        tripLogRepository.save(
+                tripLog
+        );
+
+        return TripCloseResponse.builder()
+                .tripId(tripLog.getId())
+                .tripCode(tripLog.getTripCode())
+                .totalKm(tripLog.getTotalKm())
+                .totalWorkingHour(tripLog.getTotalWorkingHour())
+                .totalIdleHour(tripLog.getTotalIdleHour())
+                .totalFuelReceived(tripLog.getTotalFuelReceived())
+                .standardFuelConsumption(
+                        tripLog.getStandardFuelConsumption()
+                )
+                .actualFuelConsumption(
+                        tripLog.getActualFuelConsumption()
+                )
+                .exceedPercent(
+                        tripLog.getExceedPercent()
+                )
+                .warningLevel(
+                        tripLog.getWarningLevel().name()
+                )
+                .status(
+                        tripLog.getStatus().name()
+                )
+                .build();
+    }
+
+    private FuelWarningLevel determineWarningLevel(
+            double exceedPercent
+    ) {
+
+        if (exceedPercent >= 15) {
+            return FuelWarningLevel.DANGEROUS;
+        }
+
+        if (exceedPercent >= 10) {
+            return FuelWarningLevel.WARNING;
+        }
+
+        return FuelWarningLevel.NORMAL;
+
+
+    }
+
+//
 
     private String generateTripCode(
             Vehicle vehicle,

@@ -16,7 +16,10 @@ public interface TripLogDetailRepository
             String tripId
     );
 
-
+    List<TripLogDetail>
+    findByTripLogId(
+            String tripId
+    );
 
 
 }

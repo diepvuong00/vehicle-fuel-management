@@ -3,10 +3,7 @@ package deoca.hhv.transport.trip.controller;
 import deoca.hhv.transport.common.ApiResponse;
 import deoca.hhv.transport.trip.dto.request.TripCreateRequest;
 import deoca.hhv.transport.trip.dto.request.TripSearchRequest;
-import deoca.hhv.transport.trip.dto.response.TripDetailLineResponse;
-import deoca.hhv.transport.trip.dto.response.TripDetailResponse;
-import deoca.hhv.transport.trip.dto.response.TripResponse;
-import deoca.hhv.transport.trip.dto.response.TripSummaryResponse;
+import deoca.hhv.transport.trip.dto.response.*;
 import deoca.hhv.transport.trip.service.TripLogService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -96,4 +93,21 @@ public class TripLogController {
                 .build();
     }
 
+//    4.Chốt close nhật trình tháng
+    @PostMapping("/{tripId}/close")
+    public ApiResponse<TripCloseResponse>
+        closeTrip(
+        @PathVariable String tripId
+    ){
+
+    return ApiResponse
+            .<TripCloseResponse>builder()
+            .success(true)
+            .data(
+                    tripLogService.closeTrip(
+                            tripId
+                    )
+            )
+            .build();
+    }
 }

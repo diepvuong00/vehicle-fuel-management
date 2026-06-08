@@ -37,8 +37,6 @@ public enum ErrorCode {
             HttpStatus.BAD_REQUEST),
 
     // TRIP LOG
-    TRIP_ALREADY_CLOSED(
-            6002, "Nhật trình đã chốt, không thể chỉnh sửa", HttpStatus.BAD_REQUEST),
 
 
     // ==========================
@@ -52,10 +50,11 @@ public enum ErrorCode {
     ),
 
     TRIP_CLOSED(
-            2002,
-                    "Nhật trình đã được chốt, không thể chỉnh sửa",
+            2017,
+            "Nhật trình đã chốt",
             HttpStatus.BAD_REQUEST
     ),
+
 
     INVALID_WORK_DATE(
             2003,
@@ -103,7 +102,40 @@ public enum ErrorCode {
             2010,
                     "Nhật trình tháng đã tồn tại",
             HttpStatus.BAD_REQUEST
+    ),
+
+
+    TRIP_ALREADY_CLOSED(
+            2011,
+            "Nhật trình đã được chốt",
+            HttpStatus.BAD_REQUEST
+    ),
+
+    TRIP_DETAIL_EMPTY(
+            2012,
+            "Nhật trình chưa có dữ liệu",
+            HttpStatus.BAD_REQUEST
+    ),
+
+    OPENING_KM_REQUIRED(
+            2014,
+            "Thiếu km đầu tháng",
+            HttpStatus.BAD_REQUEST
+    ),
+
+    CLOSING_KM_REQUIRED(
+            2015,
+            "Thiếu km cuối tháng",
+            HttpStatus.BAD_REQUEST
+    ),
+
+    NO_FUEL_RECEIVED(
+            2016,
+            "Số lượng nhiêu liệu nạp >=0.",
+            HttpStatus.BAD_REQUEST
     );
+
+
 
 
     ErrorCode(int code, String message, HttpStatus status) {
