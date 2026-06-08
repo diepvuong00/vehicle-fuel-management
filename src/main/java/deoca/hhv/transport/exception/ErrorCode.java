@@ -139,6 +139,19 @@ public enum ErrorCode {
             2019,
             "Nhật trình đang mở",
             HttpStatus.BAD_REQUEST
+    ),
+
+    //TRIPLOGDETAIL
+    TRIP_DETAIL_NOT_FOUND(
+            3001,
+            "Dòng nhật trình không tìm thấy",
+            HttpStatus.BAD_REQUEST
+    ),
+
+    DUPLICATE_WORK_DATE(
+            3002,
+            "Trùng ngày",
+            HttpStatus.BAD_REQUEST
     );
 
 

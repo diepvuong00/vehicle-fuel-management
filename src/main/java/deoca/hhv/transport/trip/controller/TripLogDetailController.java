@@ -2,6 +2,7 @@ package deoca.hhv.transport.trip.controller;
 
 import deoca.hhv.transport.common.ApiResponse;
 import deoca.hhv.transport.trip.dto.request.TripLogDetailCreateRequest;
+import deoca.hhv.transport.trip.dto.request.TripLogDetailUpdateRequest;
 import deoca.hhv.transport.trip.dto.response.TripLogDetailResponse;
 import deoca.hhv.transport.trip.dto.response.TripResponse;
 import deoca.hhv.transport.trip.service.TripLogDetailService;
@@ -45,6 +46,7 @@ public class TripLogDetailController {
     }
 
 
+//    Xem danh sách dòng nhật trình
     @GetMapping("/{tripId}/details")
     public ApiResponse<TripLogDetailResponse> getDetails(
             @PathVariable String tripId
@@ -57,6 +59,28 @@ public class TripLogDetailController {
                         tripLogDetailService
                                 .getDetails(
                                         tripId
+                                )
+                )
+                .build();
+    }
+
+//    Chỉnh sửa dòng nhật trình
+    @PutMapping("/details/{detailId}")
+    public ApiResponse<TripLogDetailResponse> updateDetail(
+            @PathVariable String detailId,
+            @Valid
+            @RequestBody
+            TripLogDetailUpdateRequest request
+    ) {
+
+        return ApiResponse
+                .<TripLogDetailResponse>builder()
+                .success(true)
+                .data(
+                        tripLogDetailService
+                                .updateDetail(
+                                        detailId,
+                                        request
                                 )
                 )
                 .build();

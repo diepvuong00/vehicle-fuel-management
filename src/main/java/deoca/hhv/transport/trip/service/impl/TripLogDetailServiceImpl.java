@@ -5,10 +5,12 @@ import deoca.hhv.transport.driver.repository.DriverRepository;
 import deoca.hhv.transport.exception.AppException;
 import deoca.hhv.transport.exception.ErrorCode;
 import deoca.hhv.transport.trip.dto.request.TripLogDetailCreateRequest;
+import deoca.hhv.transport.trip.dto.request.TripLogDetailUpdateRequest;
 import deoca.hhv.transport.trip.dto.response.TripDetailLineResponse;
 import deoca.hhv.transport.trip.dto.response.TripLogDetailResponse;
 import deoca.hhv.transport.trip.entity.TripLog;
 import deoca.hhv.transport.trip.entity.TripLogDetail;
+import deoca.hhv.transport.trip.enums.TripStatus;
 import deoca.hhv.transport.trip.repository.TripLogDetailRepository;
 import deoca.hhv.transport.trip.repository.TripLogRepository;
 import deoca.hhv.transport.trip.service.TripLogDetailService;
@@ -186,6 +188,252 @@ public class TripLogDetailServiceImpl
                 )
                 .details(
                         lines
+                )
+                .build();
+    }
+
+    @Override
+    public TripLogDetailResponse updateDetail(
+            String detailId,
+            TripLogDetailUpdateRequest request
+    ) {
+        TripLogDetail detail =
+                tripLogDetailRepository
+                        .findById(detailId)
+                        .orElseThrow(
+                                () ->
+                                        new AppException(
+                                                ErrorCode.TRIP_DETAIL_NOT_FOUND
+                                        )
+                        );
+
+        TripLog tripLog =
+                detail.getTripLog();
+
+    /*
+        Không cho sửa khi đã chốt
+     */
+        if (
+                tripLog.getStatus()
+                        ==
+                        TripStatus.CLOSED
+        ) {
+
+            throw new AppException(
+                    ErrorCode.TRIP_CLOSED
+            );
+        }
+
+    /*
+        Kiểm tra tài xế
+     */
+        Driver driver =
+                driverRepository
+                        .findById(
+                                request.getDriverId()
+                        )
+                        .orElseThrow(
+                                () ->
+                                        new AppException(
+                                                ErrorCode.DRIVER_NOT_FOUND
+                                        )
+                        );
+
+    /*
+        Không cho nhập ngoài tháng
+     */
+        if (
+                request.getWorkDate().getMonthValue()
+                        !=
+                        tripLog.getMonth()
+        ) {
+
+            throw new AppException(
+                    ErrorCode.INVALID_WORK_DATE
+            );
+        }
+
+        if (
+                request.getWorkDate().getYear()
+                        !=
+                        tripLog.getYear()
+        ) {
+
+            throw new AppException(
+                    ErrorCode.INVALID_WORK_DATE
+            );
+        }
+
+    /*
+        Trùng ngày
+     */
+        boolean existed =
+                tripLogDetailRepository
+                        .existsByTripLogIdAndWorkDateAndIdNot(
+                                tripLog.getId(),
+                                request.getWorkDate(),
+                                detailId
+                        );
+
+        if (existed) {
+
+            throw new AppException(
+                    ErrorCode.DUPLICATE_WORK_DATE
+            );
+        }
+
+    /*
+        Km cuối >= Km đầu
+     */
+        if (
+                request.getStartKm() != null
+                        &&
+                        request.getEndKm()
+                                <
+                                request.getStartKm()
+        ) {
+
+            throw new AppException(
+                    ErrorCode.INVALID_KM
+            );
+        }
+
+    /*
+        Giờ hoạt động
+     */
+        if (
+                request.getWorkingHour() != null
+                        &&
+                        request.getWorkingHour() < 0
+        ) {
+
+            throw new AppException(
+                    ErrorCode.INVALID_WORKING_HOUR
+            );
+        }
+
+    /*
+        Giờ nổ máy
+     */
+        if (
+                request.getIdleHour() != null
+                        &&
+                        request.getIdleHour() < 0
+        ) {
+
+            throw new AppException(
+                    ErrorCode.INVALID_IDLE_HOUR
+            );
+        }
+
+        detail.setWorkDate(
+                request.getWorkDate()
+        );
+
+        detail.setDriver(
+                driver
+        );
+
+        detail.setWorkContent(
+                request.getWorkContent()
+        );
+
+        detail.setStartKm(
+                request.getStartKm()
+        );
+
+        detail.setEndKm(
+                request.getEndKm()
+        );
+
+        detail.setWorkingHour(
+                request.getWorkingHour()
+        );
+
+        detail.setIdleHour(
+                request.getIdleHour()
+        );
+
+        detail.setFuelReceived(
+                request.getFuelReceived()
+        );
+
+        detail.setNote(
+                request.getNote()
+        );
+
+    /*
+        Tính khoảng cách
+     */
+        if (
+                request.getStartKm() != null
+                        &&
+                        request.getEndKm() != null
+        ) {
+
+            detail.setDistance(
+                    request.getEndKm()
+                            -
+                            request.getStartKm()
+            );
+        }
+
+        tripLogDetailRepository.save(
+                detail
+        );
+
+        return mapToResponse(
+                detail
+        );
+    }
+
+    private TripLogDetailResponse mapToResponse(
+            TripLogDetail detail
+    ) {
+
+        return TripLogDetailResponse
+                .builder()
+                .id(
+                        detail.getId()
+                )
+                .tripLogId(
+                        detail.getTripLog().getId()
+                )
+                .driverId(
+                        detail.getDriver().getId()
+                )
+                .driverName(
+                        detail.getDriver().getFullName()
+                )
+                .workDate(
+                        detail.getWorkDate()
+                )
+                .workContent(
+                        detail.getWorkContent()
+                )
+                .startKm(
+                        detail.getStartKm()
+                )
+                .endKm(
+                        detail.getEndKm()
+                )
+                .distance(
+                        detail.getDistance()
+                )
+                .workingHour(
+                        detail.getWorkingHour()
+                )
+                .idleHour(
+                        detail.getIdleHour()
+                )
+                .fuelReceived(
+                        detail.getFuelReceived()
+                )
+                .note(
+                        detail.getNote()
+                )
+                .autoGenerated(
+                        detail.getAutoGenerated()
                 )
                 .build();
     }
