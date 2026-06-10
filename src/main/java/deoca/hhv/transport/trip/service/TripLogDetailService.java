@@ -2,6 +2,7 @@ package deoca.hhv.transport.trip.service;
 
 import deoca.hhv.transport.trip.dto.request.TripLogDetailCreateRequest;
 import deoca.hhv.transport.trip.dto.request.TripLogDetailUpdateRequest;
+import deoca.hhv.transport.trip.dto.response.TripLogDetailDeleteResponse;
 import deoca.hhv.transport.trip.dto.response.TripLogDetailResponse;
 
 public interface TripLogDetailService {
@@ -21,5 +22,12 @@ public interface TripLogDetailService {
         String detailId,
         TripLogDetailUpdateRequest request
     );
+
+//    Xóa dòng nhật trình
+    TripLogDetailDeleteResponse deleteDetail(
+            String detailId
+    );
+
+
 
 }

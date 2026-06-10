@@ -152,7 +152,15 @@ public enum ErrorCode {
             3002,
             "Trùng ngày",
             HttpStatus.BAD_REQUEST
-    );
+    ),
+
+
+    AUTO_GENERATED_DETAIL_CANNOT_DELETE(
+            3003,
+            "Không thể xóa dòng nhật trình",
+            HttpStatus.BAD_REQUEST
+    )
+    ;
 
 
 

@@ -9,8 +9,7 @@ public class VehicleFuelManagementApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(VehicleFuelManagementApplication.class, args);
-//		Driver driver = new Driver();
-//		System.out.println(driver.getId()); // phải = null
+
 	}
 
 }

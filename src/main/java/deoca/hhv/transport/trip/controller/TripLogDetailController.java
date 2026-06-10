@@ -3,6 +3,7 @@ package deoca.hhv.transport.trip.controller;
 import deoca.hhv.transport.common.ApiResponse;
 import deoca.hhv.transport.trip.dto.request.TripLogDetailCreateRequest;
 import deoca.hhv.transport.trip.dto.request.TripLogDetailUpdateRequest;
+import deoca.hhv.transport.trip.dto.response.TripLogDetailDeleteResponse;
 import deoca.hhv.transport.trip.dto.response.TripLogDetailResponse;
 import deoca.hhv.transport.trip.dto.response.TripResponse;
 import deoca.hhv.transport.trip.service.TripLogDetailService;
@@ -85,5 +86,23 @@ public class TripLogDetailController {
                 )
                 .build();
     }
+
+//    Xóa dòng nhật trình
+@DeleteMapping("/details/{detailId}")
+public ApiResponse<TripLogDetailDeleteResponse> deleteDetail(
+        @PathVariable String detailId
+) {
+
+    return ApiResponse
+            .<TripLogDetailDeleteResponse>builder()
+            .success(true)
+            .data(
+                    tripLogDetailService
+                            .deleteDetail(
+                                    detailId
+                            )
+            )
+            .build();
+}
 
 }

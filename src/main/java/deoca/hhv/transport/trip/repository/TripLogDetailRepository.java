@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TripLogDetailRepository
@@ -31,5 +32,25 @@ public interface TripLogDetailRepository
             String detailId
     );
 
+//    Tất cả query phải lọc
+    List<TripLogDetail>
+    findByTripLogIdAndDeletedFalseOrderByWorkDateAsc(
+            String tripId
+    );
+
+//    Tìm theo Id
+
+    Optional<TripLogDetail>
+    findByIdAndDeletedFalse(
+            String id
+    );
+
+//    Đếm ngày
+
+    boolean existsByTripLogIdAndWorkDateAndDeletedFalse(
+            String tripId,
+            LocalDate workDate
+    );
 
 }
+
