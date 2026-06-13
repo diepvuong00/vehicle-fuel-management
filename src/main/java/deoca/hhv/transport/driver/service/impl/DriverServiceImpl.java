@@ -313,14 +313,49 @@ public class DriverServiceImpl implements DriverService {
         return mapToResponse(driver);
     }
 
-    @Override
-    public void deleteDriver(String id) {
-        Driver driver = repository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new AppException(ErrorCode.DRIVER_NOT_FOUND));
+//    @Override
+//    public void deleteDriver(String id) {
+//        Driver driver = repository.findByIdAndDeletedFalse(id)
+//                .orElseThrow(() -> new AppException(ErrorCode.DRIVER_NOT_FOUND));
+//
+//        driver.setDeleted(true);
+//        driver.setUpdatedAt(LocalDateTime.now());
+//        repository.save(driver);
+//    }
 
-        driver.setDeleted(true);
-        driver.setUpdatedAt(LocalDateTime.now());
+    @Override
+    @Transactional
+    public void deleteDriver(
+            String id
+    ) {
+
+        Driver driver =
+                repository
+                        .findById(id)
+                        .orElseThrow(
+                                () ->
+                                        new AppException(
+                                                ErrorCode.DRIVER_NOT_FOUND
+                                        )
+                        );
+
+        driver.setStatus(
+                DriverStatus.INACTIVE
+        );
+
+        driver.setUpdatedAt(
+                LocalDateTime.now()
+        );
+
         repository.save(driver);
+
+        auditService.log(
+                "DEACTIVATE",
+                "DRIVER",
+                id,
+                driver,
+                null
+        );
     }
 
     // 2. CHECK TRÙNG SĐT

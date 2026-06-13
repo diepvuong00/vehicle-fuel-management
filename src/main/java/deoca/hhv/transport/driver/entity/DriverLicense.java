@@ -1,17 +1,23 @@
 package deoca.hhv.transport.driver.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import deoca.hhv.transport.driver.enums.LicenseStatus;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "driver_licenses")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class DriverLicense {
 
     @Id
@@ -29,8 +35,9 @@ public class DriverLicense {
     @Enumerated(EnumType.STRING)
     private LicenseStatus status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "driver_id")
+    @JsonIgnore
     private Driver driver;
 
     //audit

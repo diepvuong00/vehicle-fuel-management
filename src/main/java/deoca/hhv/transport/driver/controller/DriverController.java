@@ -95,9 +95,24 @@ public class DriverController {
                 .build();
     }
 
+//    @DeleteMapping("/{id}")
+//    public ApiResponse<Void> deleteDriver(@PathVariable String id) {
+//        service.deleteDriver(id);
+//        return ApiResponse.<Void>builder()
+//                .success(true)
+//                .message("Xóa tài xế thành công")
+//                .timestamp(LocalDateTime.now())
+//                .code(200)
+//                .build();
+//    }
+
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> deleteDriver(@PathVariable String id) {
+    public ApiResponse<Void> deleteDriver(
+            @PathVariable String id
+    ) {
+
         service.deleteDriver(id);
+
         return ApiResponse.<Void>builder()
                 .success(true)
                 .message("Xóa tài xế thành công")

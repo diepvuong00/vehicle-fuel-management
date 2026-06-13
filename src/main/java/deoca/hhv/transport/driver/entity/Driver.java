@@ -1,6 +1,7 @@
 package deoca.hhv.transport.driver.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import deoca.hhv.transport.driver.enums.DriverStatus;
 import deoca.hhv.transport.fuel.entity.FuelIssue;
 import deoca.hhv.transport.trip.entity.TripLog;
@@ -14,9 +15,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "drivers")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class Driver {
 
     @Id
@@ -48,12 +50,14 @@ public class Driver {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
+    @JsonIgnore
     private List<DriverLicense> licenses = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "driver",
             fetch = FetchType.LAZY
     )
+    @JsonIgnore
     private List<FuelIssue> fuelIssues;
 
     @JsonIgnore
