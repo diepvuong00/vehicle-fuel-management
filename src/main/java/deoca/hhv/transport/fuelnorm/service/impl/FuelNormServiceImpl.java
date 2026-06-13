@@ -11,6 +11,7 @@ import deoca.hhv.transport.fuelnorm.repository.FuelNormRepository;
 import deoca.hhv.transport.fuelnorm.repository.PurposeRepository;
 import deoca.hhv.transport.fuelnorm.service.FuelNormService;
 import deoca.hhv.transport.vehicle.entity.Vehicle;
+import deoca.hhv.transport.vehicle.enums.VehicleStatus;
 import deoca.hhv.transport.vehicle.repository.VehicleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,17 @@ public class FuelNormServiceImpl implements FuelNormService {
                 .orElseThrow(() ->
                         new AppException(ErrorCode.VEHICLE_NOT_FOUND));
 
+        if (
+                vehicle.getStatus()
+                        ==
+                        VehicleStatus.RETIRED
+        ) {
+
+            throw new AppException(
+                    ErrorCode.VEHICLE_IRETIRED
+            );
+        }
+
         /*
          * Validate purpose
          */
@@ -49,6 +61,16 @@ public class FuelNormServiceImpl implements FuelNormService {
                 .findById(request.getPurposeId())
                 .orElseThrow(() ->
                         new AppException(ErrorCode.PURPOSE_NOT_FOUND));
+        if (
+                Boolean.FALSE.equals(
+                        purpose.getActive()
+                )
+        ) {
+
+            throw new AppException(
+                    ErrorCode.PURPOSE_INACTIVE
+            );
+        }
 
         /*
          * Check duplicate

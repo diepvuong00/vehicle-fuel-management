@@ -19,6 +19,12 @@ public enum ErrorCode {
             HttpStatus.BAD_REQUEST
     ),
 
+    VEHICLE_IRETIRED(
+            1006,
+            "Phương tiện đã thanh lý",
+            HttpStatus.BAD_REQUEST
+    ),
+
     //DRIVER
     DRIVER_ALREADY_EXISTS(2001, "Tài xế đã tồn tại", HttpStatus.BAD_REQUEST),
     NATIONAL_ID_EXISTED(2003, "Số điện thoại đã tồn tại", HttpStatus.BAD_REQUEST),
@@ -29,7 +35,14 @@ public enum ErrorCode {
     PURPOSE_CODE_ALREADY_EXISTS(3001, "Mã đã tồn tại", HttpStatus.BAD_REQUEST),
     PURPOSE_NAME_ALREADY_EXISTS(3002, "Tên mục đích đã tồn tại", HttpStatus.BAD_REQUEST),
     PURPOSE_NOT_FOUND(3003, "Không tìm thấy mục đích", HttpStatus.BAD_REQUEST),
-    PURPOSE_NOT_APPLY_FUEL_NORM(3004, "Mục đích này không áp dụng định mức nhiên liệu", HttpStatus.BAD_REQUEST),
+    PURPOSE_NOT_APPLY_FUEL_NORM(3004,
+            "Mục đích này không áp dụng định mức nhiên liệu",
+            HttpStatus.BAD_REQUEST),
+    PURPOSE_INACTIVE(
+            3005,
+            "Mục đích đã ngừng sử dụng",
+            HttpStatus.BAD_REQUEST
+    ),
 
 
     PURPOSE_ALREADY_INACTIVE(
