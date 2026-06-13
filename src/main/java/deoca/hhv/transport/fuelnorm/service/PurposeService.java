@@ -9,4 +9,6 @@ public interface PurposeService {
 
     PurposeResponse create(PurposeRequest request);
     List<PurposeResponse> getAll();
+
+    void deletePurpose(String id);
 }

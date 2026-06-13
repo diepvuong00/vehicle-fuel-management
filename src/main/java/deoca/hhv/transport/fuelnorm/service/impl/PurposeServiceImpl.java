@@ -77,6 +77,39 @@ public class PurposeServiceImpl implements PurposeService {
                 .toList();
     }
 
+    @Override
+    @Transactional
+    public void deletePurpose(
+            String id
+    ) {
+
+        Purpose purpose =
+                repository.findById(id)
+                        .orElseThrow(
+                                () ->
+                                        new AppException(
+                                                ErrorCode.PURPOSE_NOT_FOUND
+                                        )
+                        );
+
+        if (
+                Boolean.FALSE.equals(
+                        purpose.getActive()
+                )
+        ) {
+
+            throw new AppException(
+                    ErrorCode.PURPOSE_ALREADY_INACTIVE
+            );
+        }
+
+        purpose.setActive(false);
+
+        repository.save(
+                purpose
+        );
+    }
+
     private PurposeResponse mapToResponse(Purpose purpose) {
         return PurposeResponse.builder()
                 .id(purpose.getId())

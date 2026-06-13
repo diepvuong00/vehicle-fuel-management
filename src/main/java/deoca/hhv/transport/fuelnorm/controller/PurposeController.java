@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -38,6 +39,27 @@ public class PurposeController {
                 .success(true)
                 .message("Get purposes success")
                 .data(service.getAll())
+                .build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deletePurpose(
+            @PathVariable String id
+    ) {
+
+        service.deletePurpose(
+                id
+        );
+
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .message(
+                        "Ngừng sử dụng mục đích thành công"
+                )
+                .code(200)
+                .timestamp(
+                        LocalDateTime.now()
+                )
                 .build();
     }
 }

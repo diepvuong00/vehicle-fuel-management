@@ -31,6 +31,13 @@ public enum ErrorCode {
     PURPOSE_NOT_FOUND(3003, "Không tìm thấy mục đích", HttpStatus.BAD_REQUEST),
     PURPOSE_NOT_APPLY_FUEL_NORM(3004, "Mục đích này không áp dụng định mức nhiên liệu", HttpStatus.BAD_REQUEST),
 
+
+    PURPOSE_ALREADY_INACTIVE(
+            3005,
+            "Mục đích đã ngừng sử dụng",
+            HttpStatus.BAD_REQUEST
+    ),
+
     //FUEL NORM
     FUEL_NORM_ALREADY_EXISTS(4001, "Định mức cho phương tiện và mục đích này đã tồn tại", HttpStatus.BAD_REQUEST),
     FUEL_NORM_NOT_FOUND(4002, "Không tìm thấy định mức nhiên liệu", HttpStatus.NOT_FOUND),
