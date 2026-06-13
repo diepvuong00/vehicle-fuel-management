@@ -28,4 +28,8 @@ public interface TripLogRepository extends
     Optional<TripLog> findById(
             String id
     );
+
+    boolean existsByVehicleId(
+            String vehicleId
+    );
 }

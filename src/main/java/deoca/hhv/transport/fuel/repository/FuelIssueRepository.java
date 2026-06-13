@@ -35,19 +35,13 @@ public interface FuelIssueRepository extends JpaRepository<FuelIssue, String> {
             Pageable pageable
     );
 
-//    @Query("""
-//       SELECT f
-//       FROM FuelIssue f
-//       WHERE f.vehicle.id = :vehicleId
-//       ORDER BY f.issueDate DESC
-//       """)
-//    List<FuelIssue> findLatestFuelIssue(
-//            @Param("vehicleId") String vehicleId,
-//            Pageable pageable
-//    );
 
     Optional<FuelIssue>
     findTopByVehicleIdOrderByFuelTimeDesc(
+            String vehicleId
+    );
+
+    boolean existsByVehicleId(
             String vehicleId
     );
 }

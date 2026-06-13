@@ -13,6 +13,11 @@ public enum ErrorCode {
 
     INVALID_KEY(1003, "Invalid message key", HttpStatus.BAD_REQUEST),
     VALIDATION_ERROR(1004, "Validation failed", HttpStatus.BAD_REQUEST),
+    VEHICLE_IN_USE(
+            1005,
+            "Phương tiện đang được sử dụng",
+            HttpStatus.BAD_REQUEST
+    ),
 
     //DRIVER
     DRIVER_ALREADY_EXISTS(2001, "Tài xế đã tồn tại", HttpStatus.BAD_REQUEST),

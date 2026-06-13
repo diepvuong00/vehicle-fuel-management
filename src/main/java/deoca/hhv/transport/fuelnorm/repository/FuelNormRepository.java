@@ -30,4 +30,8 @@ public interface FuelNormRepository extends JpaRepository<FuelNorm, String> {
     findByVehicleIdAndActiveTrue(
             String vehicleId
     );
+
+    boolean existsByVehicleId(
+            String vehicleId
+    );
 }

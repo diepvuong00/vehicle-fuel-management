@@ -79,6 +79,7 @@ public class TripLogServiceImpl
                                 () ->
                                         createMonthlyTrip(
                                                 vehicle,
+                                                fuelIssue.getDriver(),
                                                 month,
                                                 year
                                         )
@@ -92,6 +93,8 @@ public class TripLogServiceImpl
         );
 
         detail.setFuelIssue(fuelIssue);
+
+        detail.setDriver(fuelIssue.getDriver());
 
         detail.setWorkDate(
                 issueDate
@@ -116,6 +119,7 @@ public class TripLogServiceImpl
      */
     private TripLog createMonthlyTrip(
             Vehicle vehicle,
+            Driver driver,
             Integer month,
             Integer year
     ) {
@@ -123,6 +127,7 @@ public class TripLogServiceImpl
         TripLog tripLog = new TripLog();
 
         tripLog.setVehicle(vehicle);
+        tripLog.setDriver(driver);
 
         tripLog.setMonth(month);
 
@@ -170,10 +175,10 @@ public class TripLogServiceImpl
                                 .getLicensePlate()
                 )
                 .driverId(
-                        tripLog.getDriver().getId()
+                        tripLog.getDriver() != null ? tripLog.getDriver().getId() : null
                 )
                 .driverName(
-                        tripLog.getDriver().getFullName()
+                        tripLog.getDriver() != null ? tripLog.getDriver().getFullName() : null
                 )
                 .month(
                         tripLog.getMonth()
@@ -289,7 +294,7 @@ public class TripLogServiceImpl
                 .build();
     }
 
-//    Filter auto
+    //    Filter auto
     @Override
     @Transactional(readOnly = true)
     public List<TripSummaryResponse> searchTrips(
@@ -411,11 +416,11 @@ public class TripLogServiceImpl
                 )
 
                 .driverId(
-                        tripLog.getDriver().getId()
+                        tripLog.getDriver() != null ? tripLog.getDriver().getId() : null
                 )
 
                 .driverName(
-                        tripLog.getDriver().getFullName()
+                        tripLog.getDriver() != null ? tripLog.getDriver().getFullName() : null
                 )
 
                 .openingKm(
@@ -474,7 +479,6 @@ public class TripLogServiceImpl
     }
 
 
-
 //    Chốt nhật trình tháng
 
     @Override
@@ -504,7 +508,6 @@ public class TripLogServiceImpl
                     ErrorCode.TRIP_ALREADY_CLOSED
             );
         }
-
 
 
 //        3. Lấy toàn bộ nhật trình
@@ -841,11 +844,11 @@ public class TripLogServiceImpl
                 )
 
                 .driverId(
-                        trip.getDriver().getId()
+                        trip.getDriver() != null ? trip.getDriver().getId() : null
                 )
 
                 .driverName(
-                        trip.getDriver().getFullName()
+                        trip.getDriver() != null ? trip.getDriver().getFullName() : null
                 )
 
                 .month(trip.getMonth())
@@ -901,11 +904,11 @@ public class TripLogServiceImpl
                 )
 
                 .driverId(
-                        detail.getDriver().getId()
+                        detail.getDriver() != null ? detail.getDriver().getId() : null
                 )
 
                 .driverName(
-                        detail.getDriver().getFullName()
+                        detail.getDriver() != null ? detail.getDriver().getFullName() : null
                 )
 
                 .workDate(

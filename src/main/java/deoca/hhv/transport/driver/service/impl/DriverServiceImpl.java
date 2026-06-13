@@ -180,6 +180,10 @@ public class DriverServiceImpl implements DriverService {
                 Specification
 
                         .where(
+                                DriverSpecification.isNotDeleted()
+                        )
+
+                        .and(
                                 DriverSpecification
                                         .hasKeyword(keyword)
                         )

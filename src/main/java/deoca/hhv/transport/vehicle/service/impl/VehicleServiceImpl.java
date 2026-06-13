@@ -5,6 +5,9 @@ import deoca.hhv.transport.common.PageResponse;
 import deoca.hhv.transport.common.storage.service.StorageService;
 import deoca.hhv.transport.exception.AppException;
 import deoca.hhv.transport.exception.ErrorCode;
+import deoca.hhv.transport.fuel.repository.FuelIssueRepository;
+import deoca.hhv.transport.fuelnorm.repository.FuelNormRepository;
+import deoca.hhv.transport.trip.repository.TripLogRepository;
 import deoca.hhv.transport.vehicle.dto.VehicleRequest;
 import deoca.hhv.transport.vehicle.dto.VehicleResponse;
 import deoca.hhv.transport.vehicle.entity.Vehicle;
@@ -31,12 +34,22 @@ import java.util.List;
 public class VehicleServiceImpl implements VehicleService {
 
     private final VehicleRepository repository;
+
+    private final TripLogRepository tripLogRepository;
+
+    private final FuelIssueRepository fuelIssueRepository;
+
+    private final FuelNormRepository fuelNormRepository;
+
     private final ModelMapper mapper;
     private final AuditService auditService;
     private final StorageService storageService;
 
-    public VehicleServiceImpl(VehicleRepository repository, ModelMapper mapper, AuditService auditService, StorageService storageService) {
+    public VehicleServiceImpl(VehicleRepository repository, TripLogRepository tripLogRepository, FuelIssueRepository fuelIssueRepository, FuelNormRepository fuelNormRepository, ModelMapper mapper, AuditService auditService, StorageService storageService) {
         this.repository = repository;
+        this.tripLogRepository = tripLogRepository;
+        this.fuelIssueRepository = fuelIssueRepository;
+        this.fuelNormRepository = fuelNormRepository;
         this.mapper = mapper;
         this.auditService = auditService;
         this.storageService = storageService;
@@ -139,17 +152,93 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
 //    4. Xóa phương tiện theo Id
+//    @Override
+//    public void deleteVehicle(String id) {
+//        Vehicle vehicle = repository.findByIdAndDeletedFalse(id)
+//                .orElseThrow(() -> new AppException(ErrorCode.VEHICLE_NOT_FOUND));
+//
+//        vehicle.setDeleted(true);
+//        vehicle.setStatus(VehicleStatus.INACTIVE);
+//
+//        repository.save(vehicle);
+//
+//        auditService.log("DELETE", "VEHICLE", id, vehicle, null);
+//    }
+
     @Override
-    public void deleteVehicle(String id) {
-        Vehicle vehicle = repository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new AppException(ErrorCode.VEHICLE_NOT_FOUND));
+    @Transactional
+    public void deleteVehicle(
+            String id
+    ) {
+
+        Vehicle vehicle =
+                repository
+                        .findByIdAndDeletedFalse(id)
+                        .orElseThrow(
+                                () ->
+                                        new AppException(
+                                                ErrorCode.VEHICLE_NOT_FOUND
+                                        )
+                        );
+
+        boolean usedInTrip =
+                tripLogRepository
+                        .existsByVehicleId(id);
+
+        boolean usedInFuelIssue =
+                fuelIssueRepository
+                        .existsByVehicleId(id);
+
+        boolean usedInNorm =
+                fuelNormRepository
+                        .existsByVehicleId(id);
+
+        if (
+                usedInTrip
+                        ||
+                        usedInFuelIssue
+                        ||
+                        usedInNorm
+        ) {
+
+            throw new AppException(
+                    ErrorCode.VEHICLE_IN_USE
+            );
+        }
 
         vehicle.setDeleted(true);
-        vehicle.setStatus(VehicleStatus.INACTIVE);
 
         repository.save(vehicle);
 
-        auditService.log("DELETE", "VEHICLE", id, vehicle, null);
+        auditService.log(
+                "DELETE",
+                "VEHICLE",
+                id,
+                vehicle,
+                null
+        );
+    }
+
+    @Transactional
+    public void deactivate(
+            String id
+    ) {
+
+        Vehicle vehicle =
+                repository
+                        .findByIdAndDeletedFalse(id)
+                        .orElseThrow(
+                                () ->
+                                        new AppException(
+                                                ErrorCode.VEHICLE_NOT_FOUND
+                                        )
+                        );
+
+        vehicle.setStatus(
+                VehicleStatus.INACTIVE
+        );
+
+        repository.save(vehicle);
     }
 
 //    5. Update phương tiện theo Id

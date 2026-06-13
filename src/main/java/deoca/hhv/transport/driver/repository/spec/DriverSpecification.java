@@ -15,7 +15,7 @@ public class DriverSpecification {
 
         return (root, query, cb) -> {
 
-            if(keyword == null || keyword.isBlank()) {
+            if (keyword == null || keyword.isBlank()) {
                 return null;
             }
 
@@ -44,7 +44,7 @@ public class DriverSpecification {
 
         return (root, query, cb) -> {
 
-            if(status == null) {
+            if (status == null) {
                 return null;
             }
 
@@ -53,5 +53,9 @@ public class DriverSpecification {
                     status
             );
         };
+    }
+
+    public static Specification<Driver> isNotDeleted() {
+        return (root, query, cb) -> cb.equal(root.get("deleted"), false);
     }
 }

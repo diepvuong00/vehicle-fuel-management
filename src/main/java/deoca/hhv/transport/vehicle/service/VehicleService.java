@@ -29,6 +29,10 @@ public interface VehicleService {
 //    4. Xóa phương tiện theo Id
     void deleteVehicle(String id);
 
+    public void deactivate(
+            String id
+    );
+
 //    5. Update phương tiện theo Id
     VehicleResponse updateVehicle(String id, VehicleRequest request);
 

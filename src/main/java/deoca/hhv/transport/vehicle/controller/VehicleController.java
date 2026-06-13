@@ -77,6 +77,18 @@ public class VehicleController {
         return ApiResponse.success("Deleted successfully");
     }
 
+    @PostMapping("/{id}/deactivate")
+    public ApiResponse<String> deactivate(
+            @PathVariable String id
+    ) {
+
+        theVehicleService.deactivate(id);
+
+        return ApiResponse.success(
+                "Vehicle deactivated successfully"
+        );
+    }
+
 //    7.Thay đổi trang thái hoạt động của phương tiện
     @PatchMapping("/{id}/status")
     public ApiResponse<?> updateStatus(
