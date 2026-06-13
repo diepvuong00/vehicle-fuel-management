@@ -22,46 +22,52 @@ public class PurposeServiceImpl implements PurposeService {
 
 
     @Override
-    public PurposeResponse create(PurposeRequest request) {
+    public PurposeResponse create(
+            PurposeRequest request
+    ) {
 
-        /*
-         * Validate code duplicate
-         */
-        if (repository.existsByCode(request.getCode())) {
-
-            throw new AppException(ErrorCode.PURPOSE_CODE_ALREADY_EXISTS);
-        }
-
-        /*
-         * Validate name duplicate
-         */
-        if (repository.existsByName(request.getName())) {
-
-            throw new AppException(ErrorCode.PURPOSE_NAME_ALREADY_EXISTS);
-        }
-
-        /*
-         * Create purpose
-         */
-        Purpose purpose = Purpose.builder()
-                .code(request.getCode().trim().toUpperCase())
-                .name(request.getName().trim())
-                .unit(request.getUnit())
-                .applyFuelNorm(
-                        request.getApplyFuelNorm() != null
-                                ? request.getApplyFuelNorm()
-                                : true
+        // validate tên
+        if (
+                repository.existsByName(
+                        request.getName().trim()
                 )
-                .description(request.getDescription())
-                .active(true)
-                .build();
+        ) {
 
-        repository.save(purpose);
+            throw new AppException(
+                    ErrorCode.PURPOSE_NAME_ALREADY_EXISTS
+            );
+        }
 
-        /*
-         * Response
-         */
-        return mapToResponse(purpose);
+        String generatedCode =
+                generatePurposeCode();
+
+        Purpose purpose =
+                Purpose.builder()
+                        .code(generatedCode)
+                        .name(
+                                request.getName().trim()
+                        )
+                        .unit(
+                                request.getUnit()
+                        )
+                        .applyFuelNorm(
+                                request.getApplyFuelNorm() != null
+                                        ? request.getApplyFuelNorm()
+                                        : true
+                        )
+                        .description(
+                                request.getDescription()
+                        )
+                        .active(true)
+                        .build();
+
+        repository.save(
+                purpose
+        );
+
+        return mapToResponse(
+                purpose
+        );
     }
 
     @Override
@@ -81,5 +87,27 @@ public class PurposeServiceImpl implements PurposeService {
                 .description(purpose.getDescription())
                 .active(purpose.getActive())
                 .build();
+    }
+
+    private String generatePurposeCode() {
+
+        String lastCode =
+                repository.findTopByOrderByCodeDesc()
+                        .map(Purpose::getCode)
+                        .orElse(null);
+
+        if (lastCode == null) {
+            return "PUR001";
+        }
+
+        int number =
+                Integer.parseInt(
+                        lastCode.substring(3)
+                );
+
+        return String.format(
+                "PUR%03d",
+                number + 1
+        );
     }
 }

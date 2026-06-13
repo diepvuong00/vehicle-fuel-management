@@ -8,8 +8,8 @@ import lombok.Data;
 @Data
 public class PurposeRequest {
 
-    @NotBlank(message = "Code is required")
-    private String code;
+//    @NotBlank(message = "Code is required")
+//    private String code;
 
     @NotBlank(message = "Name is required")
     private String name;
