@@ -77,7 +77,7 @@ public class FuelNormServiceImpl implements FuelNormService {
          */
         boolean exists =
                 fuelNormRepository
-                        .existsByVehicleIdAndPurposeId(
+                        .existsByVehicleIdAndPurposeIdAndActiveTrue(
                                 vehicle.getId(),
                                 purpose.getId()
                         );
@@ -198,12 +198,44 @@ public class FuelNormServiceImpl implements FuelNormService {
         return mapToResponse(fuelNorm);
     }
 
+//    @Override
+//    public void delete(String id) {
+//        if (!fuelNormRepository.existsById(id)) {
+//            throw new AppException(ErrorCode.FUEL_NORM_ALREADY_EXISTS);
+//        }
+//        fuelNormRepository.deleteById(id);
+//    }
+
     @Override
+    @Transactional
     public void delete(String id) {
-        if (!fuelNormRepository.existsById(id)) {
-            throw new AppException(ErrorCode.FUEL_NORM_ALREADY_EXISTS);
+
+        FuelNorm fuelNorm =
+                fuelNormRepository
+                        .findById(id)
+                        .orElseThrow(
+                                () ->
+                                        new AppException(
+                                                ErrorCode.FUEL_NORM_NOT_FOUND
+                                        )
+                        );
+
+        if (
+                Boolean.FALSE.equals(
+                        fuelNorm.getActive()
+                )
+        ) {
+
+            throw new AppException(
+                    ErrorCode.FUEL_NORM_ALREADY_INACTIVE
+            );
         }
-        fuelNormRepository.deleteById(id);
+
+        fuelNorm.setActive(false);
+
+        fuelNormRepository.save(
+                fuelNorm
+        );
     }
 
     private FuelNormResponse mapToResponse(FuelNorm fuelNorm) {

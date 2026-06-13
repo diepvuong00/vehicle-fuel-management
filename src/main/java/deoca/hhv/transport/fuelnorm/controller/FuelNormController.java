@@ -71,7 +71,7 @@ public class FuelNormController {
         fuelNormService.delete(id);
         return ApiResponse.<Void>builder()
                 .success(true)
-                .message("Delete fuel norm success")
+                .message("Xóa mềm định mức thành công")
                 .build();
     }
 }

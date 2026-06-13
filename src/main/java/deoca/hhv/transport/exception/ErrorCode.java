@@ -53,13 +53,21 @@ public enum ErrorCode {
 
     //FUEL NORM
     FUEL_NORM_ALREADY_EXISTS(4001, "Định mức cho phương tiện và mục đích này đã tồn tại", HttpStatus.BAD_REQUEST),
-    FUEL_NORM_NOT_FOUND(4002, "Không tìm thấy định mức nhiên liệu", HttpStatus.NOT_FOUND),
+    FUEL_NORM_NOT_FOUND(4002,
+            "Không tìm thấy định mức nhiên liệu",
+            HttpStatus.NOT_FOUND),
 
     // PURPOSE & FUEL NORM VALIDATION
     INVALID_NORM_VALUE(
             5001,
             "Giá trị định mức phải lớn hơn 0",
             HttpStatus.BAD_REQUEST),
+
+    FUEL_NORM_ALREADY_INACTIVE(
+            5003,
+            "Định mức đã ngừng áp dụng",
+            HttpStatus.BAD_REQUEST
+    ),
 
     // TRIP LOG
 
