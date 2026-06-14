@@ -2,7 +2,10 @@ package deoca.hhv.transport.fuel.service.impl;
 
 import deoca.hhv.transport.common.PageResponse;
 import deoca.hhv.transport.driver.entity.Driver;
+import deoca.hhv.transport.driver.enums.DriverStatus;
 import deoca.hhv.transport.driver.repository.DriverRepository;
+import deoca.hhv.transport.exception.AppException;
+import deoca.hhv.transport.exception.ErrorCode;
 import deoca.hhv.transport.fuel.dto.reponse.FuelIssueResponse;
 import deoca.hhv.transport.fuel.dto.request.FuelIssueRequest;
 import deoca.hhv.transport.fuel.entity.FuelIssue;
@@ -11,6 +14,7 @@ import deoca.hhv.transport.fuel.repository.FuelIssueRepository;
 import deoca.hhv.transport.fuel.service.FuelIssueService;
 import deoca.hhv.transport.trip.event.FuelIssueCreatedEvent;
 import deoca.hhv.transport.vehicle.entity.Vehicle;
+import deoca.hhv.transport.vehicle.enums.VehicleStatus;
 import deoca.hhv.transport.vehicle.repository.VehicleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -41,11 +45,43 @@ public class FuelIssueServiceImpl implements FuelIssueService {
 
         Vehicle vehicle = vehicleRepository.findById(request.getVehicleId())
                 .orElseThrow(() ->
-                        new RuntimeException("Vehicle not found"));
+                        new RuntimeException("Không tìm thấy phương tiện"));
+        if (
+                vehicle.getStatus()
+                        !=
+                        VehicleStatus.ACTIVE
+        ) {
+
+            throw new AppException(
+                    ErrorCode.VEHICLE_INACTIVE
+            );
+        }
+
 
         Driver driver = driverRepository.findById(request.getDriverId())
                 .orElseThrow(() ->
-                        new RuntimeException("Driver not found"));
+                        new RuntimeException("Không tìm thấy tài xế"));
+        if (
+                driver.getStatus()
+                        !=
+                        DriverStatus.ACTIVE
+        ) {
+
+            throw new AppException(
+                    ErrorCode.DRIVER_INACTIVE
+            );
+        }
+
+//        if(
+//                request.getCurrentKm()
+//                        <
+//                        vehicle.getCurrentKm()
+//        ){
+//
+//            throw new AppException(
+//                    ErrorCode.DRIVER_INACTIVE
+//            );
+//        }
 
         FuelIssue fuelIssue = FuelIssue.builder()
                 .issueCode(generateCode())
@@ -65,14 +101,6 @@ public class FuelIssueServiceImpl implements FuelIssueService {
                 .note(request.getNote())
                 .build();
 
-//        fuelIssueRepository.save(fuelIssue);
-//
-//        publisher.publishEvent(
-//                new FuelIssueCreatedEvent(
-//                        savedFuelIssue
-//                ));
-//
-//        return mapResponse(fuelIssue);
 
         // 1. Thêm "FuelIssue savedFuelIssue =" ở đầu dòng để tạo biến hứng dữ liệu sau khi lưu thành công
         FuelIssue savedFuelIssue = fuelIssueRepository.save(fuelIssue);
