@@ -223,9 +223,7 @@ public class TripLogServiceImpl
 
         if (existed) {
 
-            throw new RuntimeException(
-                    "Nhật trình tháng đã tồn tại"
-            );
+            throw new AppException(ErrorCode.TRIP_LOG_MONTH_ALREADY);
         }
 
         TripLog tripLog = new TripLog();

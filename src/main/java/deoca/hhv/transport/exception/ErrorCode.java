@@ -121,6 +121,12 @@ public enum ErrorCode {
             HttpStatus.BAD_REQUEST
     ),
 
+    TRIP_LOG_MONTH_ALREADY(
+            2022,
+            "Nhật trình tháng của phương tiện đã tồn tại",
+            HttpStatus.BAD_REQUEST
+    ),
+
 
     INVALID_WORK_DATE(
             2003,
