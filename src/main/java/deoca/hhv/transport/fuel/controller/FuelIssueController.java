@@ -3,11 +3,14 @@ package deoca.hhv.transport.fuel.controller;
 import deoca.hhv.transport.common.ApiResponse;
 import deoca.hhv.transport.common.PageResponse;
 import deoca.hhv.transport.fuel.dto.reponse.FuelIssueResponse;
+import deoca.hhv.transport.fuel.dto.request.FuelIssueCancelRequest;
 import deoca.hhv.transport.fuel.dto.request.FuelIssueRequest;
 import deoca.hhv.transport.fuel.service.FuelIssueService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/fuel-issues")
@@ -87,6 +90,34 @@ public class FuelIssueController {
         return ApiResponse.<Void>builder()
                 .success(true)
                 .message("Delete fuel issue success")
+                .build();
+    }
+
+    @PostMapping(
+            "/{fuelIssueId}/cancel"
+    )
+    public ApiResponse<Void> cancelFuelIssue(
+            @PathVariable String fuelIssueId,
+
+            @Valid
+            @RequestBody
+            FuelIssueCancelRequest request
+    ) {
+
+        fuelIssueService.cancelFuelIssue(
+                fuelIssueId,
+                request
+        );
+
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .message(
+                        "Hủy phiếu cấp phát thành công"
+                )
+                .code(200)
+                .timestamp(
+                        LocalDateTime.now()
+                )
                 .build();
     }
 

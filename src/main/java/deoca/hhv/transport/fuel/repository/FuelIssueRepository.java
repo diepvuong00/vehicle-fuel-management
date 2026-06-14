@@ -44,4 +44,8 @@ public interface FuelIssueRepository extends JpaRepository<FuelIssue, String> {
     boolean existsByVehicleId(
             String vehicleId
     );
+
+    Optional<FuelIssue> findById(
+            String id
+    );
 }

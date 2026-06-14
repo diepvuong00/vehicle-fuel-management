@@ -81,6 +81,27 @@ public enum ErrorCode {
             HttpStatus.BAD_REQUEST
     ),
 
+
+    //================== FUEL ==========
+    FUEL_ISSUE_NOT_FOUND(
+            404,
+            "Không tìm thấy phiếu cấp phát",
+            HttpStatus.BAD_REQUEST
+    ),
+
+    FUEL_ISSUE_ALREADY_CANCELLED(
+            400,
+            "Phiếu cấp phát đã bị hủy",
+            HttpStatus.BAD_REQUEST
+    ),
+
+    FUEL_ISSUE_CANCELLED(
+            400,
+            "Phiếu cấp phát đã hủy, không được chỉnh sửa",
+            HttpStatus.BAD_REQUEST
+    ),
+
+
     // TRIP LOG
 
 

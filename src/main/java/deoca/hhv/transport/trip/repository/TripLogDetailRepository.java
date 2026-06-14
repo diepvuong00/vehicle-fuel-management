@@ -52,5 +52,10 @@ public interface TripLogDetailRepository
             LocalDate workDate
     );
 
+    List<TripLogDetail>
+    findByFuelIssue_Id(
+            String fuelIssueId
+    );
+
 }
 

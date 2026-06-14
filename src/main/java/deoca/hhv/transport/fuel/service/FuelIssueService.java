@@ -2,6 +2,7 @@ package deoca.hhv.transport.fuel.service;
 
 import deoca.hhv.transport.common.PageResponse;
 import deoca.hhv.transport.fuel.dto.reponse.FuelIssueResponse;
+import deoca.hhv.transport.fuel.dto.request.FuelIssueCancelRequest;
 import deoca.hhv.transport.fuel.dto.request.FuelIssueRequest;
 
 public interface FuelIssueService {
@@ -22,6 +23,11 @@ public interface FuelIssueService {
     void delete(String id);
 
     FuelIssueResponse getById(String id);
+
+    void cancelFuelIssue(
+            String fuelIssueId,
+            FuelIssueCancelRequest request
+    );
 
 
 }

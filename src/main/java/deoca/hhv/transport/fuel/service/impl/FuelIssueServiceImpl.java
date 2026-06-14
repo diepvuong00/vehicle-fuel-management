@@ -7,12 +7,16 @@ import deoca.hhv.transport.driver.repository.DriverRepository;
 import deoca.hhv.transport.exception.AppException;
 import deoca.hhv.transport.exception.ErrorCode;
 import deoca.hhv.transport.fuel.dto.reponse.FuelIssueResponse;
+import deoca.hhv.transport.fuel.dto.request.FuelIssueCancelRequest;
 import deoca.hhv.transport.fuel.dto.request.FuelIssueRequest;
 import deoca.hhv.transport.fuel.entity.FuelIssue;
 import deoca.hhv.transport.fuel.enums.FuelIssueStatus;
 import deoca.hhv.transport.fuel.repository.FuelIssueRepository;
 import deoca.hhv.transport.fuel.service.FuelIssueService;
+import deoca.hhv.transport.trip.entity.TripLogDetail;
+import deoca.hhv.transport.trip.enums.TripStatus;
 import deoca.hhv.transport.trip.event.FuelIssueCreatedEvent;
+import deoca.hhv.transport.trip.repository.TripLogDetailRepository;
 import deoca.hhv.transport.vehicle.entity.Vehicle;
 import deoca.hhv.transport.vehicle.enums.VehicleStatus;
 import deoca.hhv.transport.vehicle.repository.VehicleRepository;
@@ -36,6 +40,8 @@ public class FuelIssueServiceImpl implements FuelIssueService {
     private final FuelIssueRepository fuelIssueRepository;
     private final VehicleRepository vehicleRepository;
     private final DriverRepository driverRepository;
+
+    private final TripLogDetailRepository tripLogDetailRepository;
 
     private final ApplicationEventPublisher publisher;
 
@@ -72,16 +78,6 @@ public class FuelIssueServiceImpl implements FuelIssueService {
             );
         }
 
-//        if(
-//                request.getCurrentKm()
-//                        <
-//                        vehicle.getCurrentKm()
-//        ){
-//
-//            throw new AppException(
-//                    ErrorCode.DRIVER_INACTIVE
-//            );
-//        }
 
         FuelIssue fuelIssue = FuelIssue.builder()
                 .issueCode(generateCode())
@@ -99,6 +95,7 @@ public class FuelIssueServiceImpl implements FuelIssueService {
                                 : LocalDateTime.now()
                 )
                 .note(request.getNote())
+                .status(FuelIssueStatus.APPROVED)
                 .build();
 
 
@@ -112,6 +109,124 @@ public class FuelIssueServiceImpl implements FuelIssueService {
 
         // 3. return cho chuẩn dữ liệu đã lưu xuống DB
         return mapResponse(savedFuelIssue);
+    }
+
+    @Override
+    @Transactional
+    public void cancelFuelIssue(
+            String fuelIssueId,
+            FuelIssueCancelRequest request
+    ) {
+
+        /*
+         * 1. Tìm phiếu
+         */
+        FuelIssue fuelIssue =
+                fuelIssueRepository
+                        .findById(
+                                fuelIssueId
+                        )
+                        .orElseThrow(
+                                () ->
+                                        new AppException(
+                                                ErrorCode.FUEL_ISSUE_NOT_FOUND
+                                        )
+                        );
+
+        /*
+         * 2. Không cho hủy 2 lần
+         */
+        if (
+                fuelIssue.getStatus()
+                        ==
+                        FuelIssueStatus.CANCELLED
+        ) {
+
+            throw new AppException(
+                    ErrorCode.FUEL_ISSUE_ALREADY_CANCELLED
+            );
+        }
+
+        /*
+         * 3. Tìm dòng nhật trình
+         */
+        List<TripLogDetail> details =
+                tripLogDetailRepository
+                        .findByFuelIssue_Id(
+                                fuelIssueId
+                        );
+
+        /*
+         * 4. Không cho hủy nếu Trip đã CLOSE
+         */
+        for (
+                TripLogDetail detail
+                :
+                details
+        ) {
+
+            if (
+                    detail.getTripLog() != null
+                            &&
+                            detail.getTripLog().getStatus()
+                                    ==
+                                    TripStatus.CLOSED
+            ) {
+
+                throw new AppException(
+                        ErrorCode.TRIP_ALREADY_CLOSED
+                );
+            }
+        }
+
+        /*
+         * 5. Hủy phiếu
+         */
+        fuelIssue.setStatus(
+                FuelIssueStatus.CANCELLED
+        );
+
+        fuelIssue.setCancelReason(
+                request.getCancelReason()
+        );
+
+//        fuelIssue.setCancelledAt(
+//                LocalDateTime.now()
+//        );
+//
+//        fuelIssue.setCancelledBy(
+//                "SYSTEM"
+//                // Sau này lấy user login
+//        );
+
+        fuelIssueRepository.save(
+                fuelIssue
+        );
+
+        /*
+         * 6. Hủy dòng nhật trình tự sinh
+         */
+        for (
+                TripLogDetail detail
+                :
+                details
+        ) {
+
+            if (
+                    Boolean.TRUE.equals(
+                            detail.getAutoGenerated()
+                    )
+            ) {
+
+                detail.setDeleted(
+                        true
+                );
+
+                tripLogDetailRepository.save(
+                        detail
+                );
+            }
+        }
     }
 
     private FuelIssueResponse mapResponse(FuelIssue fuelIssue) {
@@ -253,6 +368,17 @@ public class FuelIssueServiceImpl implements FuelIssueService {
     public FuelIssueResponse update(String id, FuelIssueRequest request) {
         FuelIssue fuelIssue = fuelIssueRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Fuel issue not found"));
+
+        if (
+                fuelIssue.getStatus()
+                        ==
+                        FuelIssueStatus.CANCELLED
+        ) {
+
+            throw new AppException(
+                    ErrorCode.FUEL_ISSUE_CANCELLED
+            );
+        }
 
         Vehicle vehicle = vehicleRepository.findById(request.getVehicleId())
                 .orElseThrow(() -> new RuntimeException("Vehicle not found"));

@@ -110,6 +110,8 @@ public class FuelIssue {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    private String cancelReason;
+
     @PrePersist
     public void prePersist() {
 
